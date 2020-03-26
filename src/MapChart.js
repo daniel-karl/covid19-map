@@ -570,7 +570,6 @@ class MapChart extends Map {
           }
           that.state.setTotRec(that.totRec);
           for (let i = 0; i < that.recovered.length; i++) {
-            console.log(that.confirmed);
             that.recoveredAbsByRowId[that.recovered[i].rowId] = that.recovered[i].size;
             that.recovered[i].size = (that.recovered[i].size - minSize) / (that.state.maxSize - minSize);
             that.recovered[i].momentumLast1 = that.recovered[i].size - (that.recovered[i].sizeMin1 - minSize) / (that.state.maxSize - minSize);

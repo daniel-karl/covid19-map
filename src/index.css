@@ -73,22 +73,28 @@ body {
 }
 
 .controls.minimized {
-  width: 50px;
-  height: 26px;
+  width: 51px;
+  height: 24px;
   border-radius: 3px;
   padding: 0px;
   z-index: 999;
-  box-shadow: 0px 0px 5px #333;
+  box-shadow: 0px 0px 5px #999;
 }
 
 .controls.minimized .btn-collapse{
-  top: 3px;
-  left: 4px;
-  padding: 3px;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  padding-top: auto !important;
+  margin-left: 6px;
+  padding: 3px !important;
+  width: auto !important;
+  text-align: center;
   font-size: 14px !important;
   font-variant: small-caps;
-  line-height: 14px;
-  height: 14px !important;
+  line-height: normal !important;
+  height: auto !important;
 }
 
 .timeline {
