@@ -81,6 +81,7 @@ class MapChart extends Map {
     this.recoveredAbsByRowId = {};
     this.deathsAbsByRowId = {};
 
+    this.rowIds = {};
     this.confirmed = [];
     this.recovered = [];
     this.deaths = [];
@@ -166,6 +167,7 @@ class MapChart extends Map {
     this.recoveredAbsByRowId = {};
     this.deathsAbsByRowId = {};
 
+    this.rowIds = {};
     this.confirmed = [];
     this.recovered = [];
     this.deaths = [];
@@ -269,6 +271,39 @@ class MapChart extends Map {
           };
           that.totConf += size;
           that.confirmed.push(marker);
+          that.rowIds[marker.name] = rowId;
+
+          // push an empty marker to deaths
+          that.deaths.push({
+            markerOffset: 0,
+            name: (data[0] ? data[0] + ", " + data[1] : data[1]) ? (data[0] ? data[0] + ", " + data[1] : data[1]) : "",
+            coordinates: [data[3], data[2]],
+            size: 0,
+            sizeMin1: 0,
+            sizeMin3: 0,
+            sizeMin7: 0,
+            val: 0,
+            rowId: rowId,
+            valMin1: 0,
+            valMin3: 0,
+            valMin7: 0
+          });
+
+          // push an empty marker to recovered
+          that.recovered.push({
+            markerOffset: 0,
+            name: (data[0] ? data[0] + ", " + data[1] : data[1]) ? (data[0] ? data[0] + ", " + data[1] : data[1]) : "",
+            coordinates: [data[3], data[2]],
+            size: 0,
+            sizeMin1: 0,
+            sizeMin3: 0,
+            sizeMin7: 0,
+            val: 0,
+            rowId: rowId,
+            valMin1: 0,
+            valMin3: 0,
+            valMin7: 0
+          });
 
           // compute total tested and total population
           if(Testing.RATES[marker.name] && Population.ABSOLUTE[marker.name]) {
@@ -394,24 +429,34 @@ class MapChart extends Map {
             that.recovered[i].momentumLast7 = that.recovered[i].size - (that.recovered[i].sizeMin7 - minSize) / (that.state.maxSize - minSize);
           }
         }
+        that.loadRecovered(recoveredDataSource);
+
+        that.loadDeceased(deceasedDataSource);
         that.setState({});
       }
     });
 
+  };
+
+  loadRecovered = (recoveredDataSource) => {
+    let that = this;
     if(!this.state.recoveryMode) {
       Papa.parse(recoveredDataSource, {
         download: true,
         complete: function (results) {
-          that.recovered = [];
           let skipRow = true;
           let minSize = 0;
-          let rowId = 0;
           for (let data of results.data) {
             if (skipRow) {
               skipRow = false;
               continue;
             }
             if(data.length === 1 ) {
+              continue;
+            }
+            let name = data[0] ? data[0] + ", " + data[1] : data[1];
+            if(!that.rowIds[name]) {
+              console.log(name + ": recovered, but no confirmed data");
               continue;
             }
             let size = "";
@@ -444,24 +489,24 @@ class MapChart extends Map {
             }
             let marker = {
               markerOffset: 0,
-              name: data[0] ? data[0] + ", " + data[1] : data[1],
+              name: name,
               coordinates: [data[3], data[2]],
               size: size,
               sizeMin1: sizeMin1,
               sizeMin3: sizeMin3,
               sizeMin7: sizeMin7,
               val: size,
-              rowId: rowId,
+              rowId: that.rowIds[name],
               valMin1: size - sizeMin1,
               valMin3: size - sizeMin3,
               valMin7: size - sizeMin7
             };
             that.totRec += size;
-            that.recovered.push(marker);
-            rowId++;
+            that.recovered[that.rowIds[name]] = marker;
           }
           that.state.setTotRec(that.totRec);
           for (let i = 0; i < that.recovered.length; i++) {
+            console.log(that.confirmed);
             that.recoveredAbsByRowId[that.recovered[i].rowId] = that.recovered[i].size;
             that.recovered[i].size = (that.recovered[i].size - minSize) / (that.state.maxSize - minSize);
             that.recovered[i].momentumLast1 = that.recovered[i].size - (that.recovered[i].sizeMin1 - minSize) / (that.state.maxSize - minSize);
@@ -472,14 +517,15 @@ class MapChart extends Map {
         }
       });
     }
+  };
 
+  loadDeceased = (deceasedDataSource) => {
+    let that = this;
     Papa.parse(deceasedDataSource, {
       download: true,
       complete: function(results) {
-        that.deaths = [];
         let skipRow = true;
         let minSize = 0;
-        let rowId = 0;
         for(let data of results.data) {
           if(skipRow) {
             skipRow = false;
@@ -516,23 +562,23 @@ class MapChart extends Map {
           if(size > that.state.maxSize) {
             that.state.maxSize = size;
           }
+          let name = data[0] ? data[0] + ", " + data[1] : data[1];
           let marker = {
             markerOffset: 0,
-            name: data[0] ? data[0] + ", " + data[1] : data[1],
+            name: name,
             coordinates: [data[3], data[2]],
             size: size,
             sizeMin1: sizeMin1,
             sizeMin3: sizeMin3,
             sizeMin7: sizeMin7,
             val: size,
-            rowId: rowId,
+            rowId: that.rowIds[name],
             valMin1: size - sizeMin1,
             valMin3: size - sizeMin3,
             valMin7: size - sizeMin7
           };
           that.totDead += size;
-          that.deaths.push(marker);
-          rowId++;
+          that.deaths[that.rowIds[name]] = marker;
         }
         that.state.setTotDead(that.totDead);
         for(let i = 0; i < that.deaths.length; i++) {
@@ -551,11 +597,11 @@ class MapChart extends Map {
 
   onSelect(selectedList, selectedItem) {
 
-}
+  }
 
-onRemove(selectedList, removedItem) {
+  onRemove(selectedList, removedItem) {
 
-}
+  }
 
   render() {
     let that = this;
@@ -818,10 +864,7 @@ onRemove(selectedList, removedItem) {
         </LayerGroup>
 
         <LayerGroup key={2} className={"recoveredLayer"}>
-          {
-            this.state.datasource == "jh" &&
-            this.recoveredMarkers()
-          }
+          { this.recoveredMarkers() }
         </LayerGroup>
 
         <LayerGroup key={1} className={"deceasedLayer"}>
@@ -1229,14 +1272,7 @@ onRemove(selectedList, removedItem) {
           </div>
           <div>
             <Badge variant={"danger"}><FontAwesomeIcon icon={faProcedures}/> {Utils.rounded(active)} active</Badge>
-            {
-              this.state.datasource == "jh" &&
-              <Badge className="ml-1 mr-1" variant={"success"}><FontAwesomeIcon icon={faHeartbeat}/> {Utils.rounded(recovered)} recovered</Badge>
-            }
-            {
-              this.state.datasource == "jh2" &&
-                  " "
-            }
+            <Badge className="ml-1 mr-1" variant={"success"}><FontAwesomeIcon icon={faHeartbeat}/> {Utils.rounded(recovered)} recovered</Badge>
             <Badge variant={"dark"}><FontAwesomeIcon icon={faHeartBroken}/> {Utils.rounded(deaths)} deceased</Badge><br />
             {
               projected > confirmed && this.state.testmode && this.state.testscale > 0 &&
