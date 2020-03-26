@@ -20,9 +20,9 @@ function App() {
     [
       <Navbar bg="light" fixed="top" className={"p-0 pl-2"} expand={"xs"}>
         <Navbar.Brand>
-            <span className={"open"}>THE OPEN</span>
+            <span className={"open"}>OPEN SOURCE</span>
             <span className="small">C<FontAwesomeIcon icon={faDotCircle} />VID19 </span>
-            <span className={"project"}>PROJECT</span>
+            <span className={"project"}>MAP.IO</span>
         </Navbar.Brand>
           <span>
             <span className={"small text-danger mr-2"}>
