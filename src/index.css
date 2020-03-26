@@ -20,6 +20,21 @@ body {
   outline: none !important;
 }
 
+.open {
+  font-size: 10px;
+  font-variant: all-small-caps;
+  position: absolute;
+  top: 2px;
+}
+
+.project {
+  font-size: 10px;
+  font-variant: all-small-caps;
+  position: absolute;
+  left: 60px;
+  top: 33px;
+}
+
 .controls {
   position: absolute;
   left: 0px;
