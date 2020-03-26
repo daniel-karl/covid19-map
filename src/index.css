@@ -16,37 +16,33 @@ body {
   margin-top: 50px;
 }
 
+.leaflet-container {
+  background: #f8f9fa;
+}
+
 * {
   outline: none !important;
 }
 
-.logo1 {
-  font-size: 10px;
-  font-variant: all-small-caps;
-  position: absolute;
-  top: 2px;
-}
-
-.logo2 {
+.mapio {
   font-size: 10px;
   font-variant: all-small-caps;
   position: absolute;
   left: 66px;
-  top: 33px;
+  top: 32px;
 }
 
 .controls {
   position: absolute;
-  left: 0px;
-  top:48px;
-  background: #eeee;
+  top: 10px;
+  left: 10px;
+  background: #f8f9faee;
   padding: 10px;
-  border-bottom-right-radius: 5px;
   width: 260px;
   z-index: 999;
-  box-shadow: 0px 0px 10px #333;
+  box-shadow: 0px 0px 5px #999;
   overflow: scroll;
-  max-height: 500px;
+  max-height: 400px;
 }
 
 @media only screen and (max-height: 500px) {
@@ -58,34 +54,35 @@ body {
 
 .navbar {
   /*box-shadow: 0px 0px 10px #333;*/
-  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0px 0px 5px #333;
 }
 
 .controls.minimized {
   width: 45px;
   height: 24px;
-  border-bottom-right-radius: 5px;
+  border-radius: 5px;
   z-index: 999;
   text-align: center;
+  box-shadow: 0px 0px 5px #000;
 }
 
 .controls.minimized .btn-collapse{
-  top: 4px;
-  left: 6px;
+  top: 3px;
+  left: 4px;
   padding: 3px;
+  font-size: 14px !important;
+  font-variant: small-caps;
 }
 
 .timeline {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  background: #eeee;
-  padding: 4px;
-  padding-top: 6px;
-  padding-right: 10px;
-  border-bottom-right-radius: 5px;
+  bottom: 10px;
+  left: 10px;
+  background: #f8f9faee;
+  padding: 10px;
   z-index: 1000;
-  box-shadow: 0px 0px 5px #333;
+  box-shadow: 0px 0px 5px #999;
+  text-align: center;
 }
 
 .showInMomentum {

@@ -766,7 +766,7 @@ class MapChart extends Map {
         </div>
       </div>
       <div className="small timeline">
-        <button disabled style={{color: "black", opacity: 1, pointerEvents: "none"}} className={"btn btn-sm"}><b>{shownDate.toLocaleDateString()}</b></button>
+        <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}><b>{shownDate.toLocaleDateString()}</b></button><br />
         <button
             className={this.state.dayOffset < 0 ? "btn btn-sm btn-dark leftTime" : "btn btn-sm btn-outline-dark leftTime"}
             style={{height: "30px", lineHeight: "20px"}}
