@@ -44,6 +44,9 @@ const geoUrl =
 const ONE_M = 1000000;
 
 class MapChart extends Map {
+
+  static ROW_IDS;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -81,7 +84,6 @@ class MapChart extends Map {
     this.recoveredAbsByRowId = {};
     this.deathsAbsByRowId = {};
 
-    this.rowIds = {};
     this.confirmed = [];
     this.recovered = [];
     this.deaths = [];
@@ -94,7 +96,11 @@ class MapChart extends Map {
   }
 
   componentDidMount() {
-    this.reload();
+    if(!MapChart.ROW_IDS) {
+      this.loadNamesOnce();
+    } else {
+      this.reload();
+    }
   }
 
   componentDidUpdate (prevProps) {
@@ -167,7 +173,6 @@ class MapChart extends Map {
     this.recoveredAbsByRowId = {};
     this.deathsAbsByRowId = {};
 
-    this.rowIds = {};
     this.confirmed = [];
     this.recovered = [];
     this.deaths = [];
@@ -180,6 +185,59 @@ class MapChart extends Map {
     this.state.setTotConf(this.totConf);
     this.state.setTotRec(this.totRec);
     this.state.setTotDead(this.totDead);
+  };
+
+  loadNamesOnce = () => {
+    let that = this;
+    that.totConf = 0;
+    that.totRec = 0;
+    that.totDead = 0;
+    that.deathsByRowId = {};
+    that.recoveredAbsByRowId = {};
+    that.deathsAbsByRowId = {};
+
+    MapChart.ROW_IDS = {};
+
+    let confirmedDataSource = null;
+    let recoveredDataSource = null;
+    let deceasedDataSource = null;
+    switch(that.state.datasource) {
+      case "jh":
+        confirmedDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Confirmed_archived_0325.csv";
+        recoveredDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Recovered_archived_0325.csv";
+        deceasedDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Deaths_archived_0325.csv";
+        break;
+      case "jh2":
+        confirmedDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+        recoveredDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
+        deceasedDataSource = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+        break;
+    }
+
+    Papa.parse(confirmedDataSource, {
+      download: true,
+      complete: async function (results) {
+        // names
+        let skipRow = true;
+        let rowId = 0;
+        for (let data of results.data) {
+          if (skipRow) {
+            skipRow = false;
+            continue;
+          }
+          if (data.length === 1) {
+            continue;
+          }
+
+          let name = (data[0] ? data[0] + ", " + data[1] : data[1]) ? (data[0] ? data[0] + ", " + data[1] : data[1]) : "";
+          MapChart.ROW_IDS[name] = rowId;
+
+          rowId++;
+        }
+        that.reload();
+        that.setState({});
+      }
+    });
   };
 
   reload = () => {
@@ -207,6 +265,17 @@ class MapChart extends Map {
         break;
     }
 
+    that.confirmed = [];
+    that.recovered = [];
+    that.deceased = [];
+
+    that.loadConfirmed(confirmedDataSource);
+    that.loadRecovered(recoveredDataSource);
+    that.loadDeceased(deceasedDataSource);
+  };
+
+  loadConfirmed = (confirmedDataSource) => {
+    let that = this;
     Papa.parse(confirmedDataSource, {
       download: true,
       complete: async function(results) {
@@ -271,7 +340,6 @@ class MapChart extends Map {
           };
           that.totConf += size;
           that.confirmed.push(marker);
-          that.rowIds[marker.name] = rowId;
 
           // push an empty marker to deaths
           that.deaths.push({
@@ -429,13 +497,9 @@ class MapChart extends Map {
             that.recovered[i].momentumLast7 = that.recovered[i].size - (that.recovered[i].sizeMin7 - minSize) / (that.state.maxSize - minSize);
           }
         }
-        that.loadRecovered(recoveredDataSource);
-
-        that.loadDeceased(deceasedDataSource);
         that.setState({});
       }
     });
-
   };
 
   loadRecovered = (recoveredDataSource) => {
@@ -455,7 +519,7 @@ class MapChart extends Map {
               continue;
             }
             let name = data[0] ? data[0] + ", " + data[1] : data[1];
-            if(!that.rowIds[name]) {
+            if(!MapChart.ROW_IDS[name]) {
               console.log(name + ": recovered, but no confirmed data");
               continue;
             }
@@ -496,13 +560,13 @@ class MapChart extends Map {
               sizeMin3: sizeMin3,
               sizeMin7: sizeMin7,
               val: size,
-              rowId: that.rowIds[name],
+              rowId: MapChart.ROW_IDS[name],
               valMin1: size - sizeMin1,
               valMin3: size - sizeMin3,
               valMin7: size - sizeMin7
             };
             that.totRec += size;
-            that.recovered[that.rowIds[name]] = marker;
+            that.recovered[MapChart.ROW_IDS[name]] = marker;
           }
           that.state.setTotRec(that.totRec);
           for (let i = 0; i < that.recovered.length; i++) {
@@ -572,17 +636,16 @@ class MapChart extends Map {
             sizeMin3: sizeMin3,
             sizeMin7: sizeMin7,
             val: size,
-            rowId: that.rowIds[name],
+            rowId: MapChart.ROW_IDS[name],
             valMin1: size - sizeMin1,
             valMin3: size - sizeMin3,
             valMin7: size - sizeMin7
           };
           that.totDead += size;
-          that.deaths[that.rowIds[name]] = marker;
+          that.deaths[MapChart.ROW_IDS[name]] = marker;
         }
         that.state.setTotDead(that.totDead);
         for(let i = 0; i < that.deaths.length; i++) {
-          // console.log(deaths[i].size + ", " + minSize + ", " + maxSize);
           that.deathsAbsByRowId[that.deaths[i].rowId] = that.deaths[i].size;
           that.deaths[i].size = (that.deaths[i].size - minSize) / (that.state.maxSize - minSize);
           that.deathsByRowId[that.deaths[i].rowId] = that.deaths[i].size;
@@ -689,11 +752,11 @@ class MapChart extends Map {
             <option value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</option>
             <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark</option>
           </Form.Control>
-          <span className="small text-muted">Data source:</span>
+          {/*<span className="small text-muted">Data source:</span>
           <Form.Control value={that.state.datasource} style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm" as="select" onChange={(e) => {that.state.datasource = e.nativeEvent.target.value; that.reset(); that.reload();}}>
             <option value="jh2">Johns Hopkins v2</option>
             <option value="jh">Johns Hopkins v1 until 03/23/2020</option>
-          </Form.Control>
+          </Form.Control>*/}
 
           <div className={"credits"}>
             <Badge><a target="_blank" className="text-secondary" rel="noopener noreferrer" href={"https://github.com/daniel-karl/covid19-map/issues"}><FontAwesomeIcon icon={faBug} /> Issues</a></Badge>
