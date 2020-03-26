@@ -20,18 +20,18 @@ body {
   outline: none !important;
 }
 
-.open {
+.logo1 {
   font-size: 10px;
   font-variant: all-small-caps;
   position: absolute;
   top: 2px;
 }
 
-.project {
+.logo2 {
   font-size: 10px;
   font-variant: all-small-caps;
   position: absolute;
-  left: 67px;
+  left: 66px;
   top: 33px;
 }
 
