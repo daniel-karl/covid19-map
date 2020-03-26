@@ -34,6 +34,7 @@ body {
 
 .controls {
   position: absolute;
+  display: inline-block;
   top: 10px;
   left: 10px;
   background: #f8f9faf0;
@@ -72,11 +73,11 @@ body {
 }
 
 .controls.minimized {
-  width: 45px;
-  height: 24px;
-  border-radius: 5px;
+  width: 50px;
+  height: 26px;
+  border-radius: 3px;
+  padding: 0px;
   z-index: 999;
-  text-align: center;
   box-shadow: 0px 0px 5px #333;
 }
 
@@ -87,6 +88,7 @@ body {
   font-size: 14px !important;
   font-variant: small-caps;
   line-height: 14px;
+  height: 14px !important;
 }
 
 .timeline {
@@ -96,7 +98,7 @@ body {
   background: #f8f9faf0;
   padding: 10px;
   padding-top: 5px;
-  z-index: 1000;
+  z-index: 10000;
   box-shadow: 0px 0px 5px #999;
   text-align: center;
 }
