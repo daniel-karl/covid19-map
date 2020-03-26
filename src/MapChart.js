@@ -62,7 +62,7 @@ class MapChart extends Map {
       dayOffset: 0,
       playmode: false,
       recoverydays: 12,
-      mapstyle: "https://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      mapstyle: "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
       selectedData: ["projected", "confirmed", "recovered", "deceased"],
       datasource: "jh2",
       recoveryMode: false,
@@ -176,11 +176,7 @@ class MapChart extends Map {
     this.totDead = 0;
 
     this.state.setTotConf(this.totConf);
-    if(this.state.recoveryMode || this.state.datasource == "jh") {
-      this.state.setTotRec(this.totRec);
-    } else {
-      this.state.setTotRec("-");
-    }
+    this.state.setTotRec(this.totRec);
     this.state.setTotDead(this.totDead);
   };
 
@@ -327,7 +323,7 @@ class MapChart extends Map {
           that.projected.push(marker);
           rowId++;
         }
-        if(that.state.datasource === "jh2") {
+        if(that.state.recoveryMode) {
           that.recovered = [];
           let skipRow = true;
           let minSize = 0;
@@ -389,11 +385,7 @@ class MapChart extends Map {
             that.recovered.push(marker);
             rowId++;
           }
-          if(that.state.recoveryMode || that.state.datasource == "jh") {
-            that.state.setTotRec(that.totRec);
-          } else {
-            that.state.setTotRec(0);
-          }
+          that.state.setTotRec(that.totRec);
           for (let i = 0; i < that.recovered.length; i++) {
             that.recoveredAbsByRowId[that.recovered[i].rowId] = that.recovered[i].size;
             that.recovered[i].size = (that.recovered[i].size - minSize) / (that.state.maxSize - minSize);
@@ -406,7 +398,7 @@ class MapChart extends Map {
       }
     });
 
-    if(recoveredDataSource) {
+    if(!this.state.recoveryMode) {
       Papa.parse(recoveredDataSource, {
         download: true,
         complete: function (results) {
@@ -495,7 +487,7 @@ class MapChart extends Map {
           }
           if(data.length === 1 ) {
               continue;
-            }
+          }
           let size = "";
           let sizeMin1 = "";
           let sizeMin3 = "";
@@ -570,8 +562,6 @@ onRemove(selectedList, removedItem) {
     let shownDate = this.state.datasource !== "jh" ? new Date() : new Date("March 23, 2020 00:00:00");
     shownDate.setDate(shownDate.getDate() + this.state.dayOffset);
 
-    let dataOptions = [{name: 'Srigar', id: 1},{name: 'Sam', id: 2}];
-
     return (
       <>
       <div className={"small controls" + (that.state.minimized ? " minimized" : "")}>
@@ -622,7 +612,7 @@ onRemove(selectedList, removedItem) {
             ]
           }
           {
-            this.state.recoveryMode && that.state.datasource === "jh2" &&
+            this.state.recoveryMode &&
             [
               <span className="small text-muted mr-2">Number of days to recover:</span>,
               <FontAwesomeIcon size={"xs"} icon={faQuestion}
@@ -649,8 +639,8 @@ onRemove(selectedList, removedItem) {
           <Form.Check inline title="Represent data as horizontal pill. Hover pill on map to see more details." className="small hideInMomentum" checked={that.state.chart==="pill" } label="Pills" type={"radio"} name={"a"} id={`inline-radio-3`} onChange={() => {that.setState({chart: "pill"});}} disabled={that.state.momentum!=="none" ? true : false}/><br />*/}
           <span className="small text-muted">Map style:</span><br/>
           <Form.Control value={that.state.mapstyle} style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm" as="select" onChange={(e) => {that.setState({mapstyle: e.nativeEvent.target.value});}}>
-            <option value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</option>
             <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">Light</option>
+            <option value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</option>
             <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark</option>
           </Form.Control>
           <span className="small text-muted">Data source:</span>
@@ -828,7 +818,10 @@ onRemove(selectedList, removedItem) {
         </LayerGroup>
 
         <LayerGroup key={2} className={"recoveredLayer"}>
-          { (this.state.recoveryMode || this.state.datasource == "jh") && this.recoveredMarkers() }
+          {
+            this.state.datasource == "jh" &&
+            this.recoveredMarkers()
+          }
         </LayerGroup>
 
         <LayerGroup key={1} className={"deceasedLayer"}>
@@ -946,7 +939,7 @@ onRemove(selectedList, removedItem) {
         let val;
         switch (this.state.momentum) {
           case "last1":
-            if((this.state.recoveryMode || this.state.datasource === "jh") && this.recovered[rowId]) {
+            if(this.recovered[rowId]) {
               size = momentumLast1 - this.recovered[rowId].momentumLast1;
               val = valMin1 - this.recovered[rowId].valMin1;
             } else {
@@ -955,7 +948,7 @@ onRemove(selectedList, removedItem) {
             }
             break;
           case "last3":
-            if((this.state.recoveryMode || this.state.datasource === "jh") && this.recovered[rowId]) {
+            if(this.recovered[rowId]) {
               size = momentumLast3 - this.recovered[rowId].momentumLast3;
               val = valMin3 - this.recovered[rowId].valMin3;
             } else {
@@ -964,7 +957,7 @@ onRemove(selectedList, removedItem) {
             }
             break;
           case "last7":
-            if((this.state.recoveryMode || this.state.datasource === "jh") && this.recovered[rowId]) {
+            if(this.recovered[rowId]) {
               size = momentumLast7 - this.recovered[rowId].momentumLast7;
               val = valMin7 - this.recovered[rowId].valMin7;
             } else {
@@ -1232,30 +1225,17 @@ onRemove(selectedList, removedItem) {
         <div>
           <div>
               <b>{name}</b><br />
-              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])} &middot;
-              {
-                (
-                  this.state.recoveryMode || this.state.datasource === "jh") &&
-                  [
-                    " ",
-                    <FontAwesomeIcon icon={faBiohazard}/>,
-                    <span>{Utils.rounded(confirmed)}</span>,
-                    " ·"
-                  ]
-              }
-              &nbsp;<FontAwesomeIcon icon={faBolt}/> {Utils.rounded(1000000*confirmed/Population.ABSOLUTE[name])} ppm
+              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])} &middot; <FontAwesomeIcon icon={faBiohazard}/> <span>{Utils.rounded(confirmed)}</span> &middot; <FontAwesomeIcon icon={faBolt}/> {Utils.rounded(1000000*confirmed/Population.ABSOLUTE[name])} ppm
           </div>
           <div>
+            <Badge variant={"danger"}><FontAwesomeIcon icon={faProcedures}/> {Utils.rounded(active)} active</Badge>
             {
-              (this.state.recoveryMode || this.state.datasource === "jh") &&
-              [
-                <Badge variant={"danger"}><FontAwesomeIcon icon={faProcedures}/> {Utils.rounded(active)} active</Badge>,
-                <Badge className="ml-1 mr-1" variant={"success"}><FontAwesomeIcon icon={faHeartbeat}/> {Utils.rounded(recovered)} recovered</Badge>
-              ]
+              this.state.datasource == "jh" &&
+              <Badge className="ml-1 mr-1" variant={"success"}><FontAwesomeIcon icon={faHeartbeat}/> {Utils.rounded(recovered)} recovered</Badge>
             }
             {
-              (!this.state.recoveryMode && this.state.datasource !== "jh") &&
-              <Badge className="mr-1" variant={"danger"}><FontAwesomeIcon icon={faBiohazard}/> {Utils.rounded(confirmed)} confirmed</Badge>
+              this.state.datasource == "jh2" &&
+                  " "
             }
             <Badge variant={"dark"}><FontAwesomeIcon icon={faHeartBroken}/> {Utils.rounded(deaths)} deceased</Badge><br />
             {

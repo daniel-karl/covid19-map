@@ -129,6 +129,7 @@ export const ABSOLUTE = {
   "Central and Southern Asia": 2014708531,
   "Chad": 16425859,
   "Channel Islands, United Kingdom": 173859,
+  "Jersey, United Kingdom": 97857,
   "Chile": 19116209,
   "China": 1439323774,
   "China (and dependencies)": 1471286879,
