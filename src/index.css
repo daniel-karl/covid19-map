@@ -48,12 +48,21 @@ body {
 @media only screen and (max-height: 500px) {
   .controls {
     overflow: scroll;
-    height: 170px;
+    height: 200px;
   }
 
   .timeline {
-    top: 10px;
-    right: 10px;
+    position: absolute;
+    top: 10px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    background: #f8f9faf0;
+    padding: 10px;
+    padding-top: 5px;
+    z-index: 1000;
+    box-shadow: 0px 0px 5px #999;
+    text-align: center;
   }
 }
 
@@ -77,6 +86,7 @@ body {
   padding: 3px;
   font-size: 14px !important;
   font-variant: small-caps;
+  line-height: 14px;
 }
 
 .timeline {
