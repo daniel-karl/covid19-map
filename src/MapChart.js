@@ -12,6 +12,8 @@ import Utils from "./Utils";
 import { CSSTransitionGroup } from 'react-transition-group'
 import {Multiselect} from "multiselect-react-dropdown";
 
+import Button from "react-bootstrap/Button";
+
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -682,7 +684,12 @@ class MapChart extends Map {
         <button hidden={!that.state.minimized} className={"btn-collapse"} onClick={() => {that.setState({minimized: false})}}>open</button>
         <div hidden={that.state.minimized}>
           <span className="small text-muted mr-2">Mode:</span>
-          <Tooltip title={<span><b>Live mode:</b> Glyphs show confirmed, recovered and deceased numbers (updated daily).<br /><br /><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>} small arrow>
+          <Tooltip
+              title={<span><b>Live mode:</b> Glyphs show confirmed, recovered and deceased numbers (updated daily).<br /><br /><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
+              small={"true"}
+              arrow
+              disableTouchListener={true}
+          >
             <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
           </Tooltip>
           <Form.Control value={that.state.momentum} style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm" as="select" onChange={(e) => {that.setState({momentum: e.nativeEvent.target.value, chart: "pie", testmode: false, testscale: 0});}}>
@@ -699,19 +706,71 @@ class MapChart extends Map {
             showCheckbox={true}
           />*/}
           <span className="small text-muted mr-2">Normalization:</span>
-          <Tooltip title="Scale the glyphs on the map according to different criteria." small arrow>
+          <Tooltip
+              title="Scale the size of the glyphs on the map according to different criteria."
+              small={"true"}
+              arrow
+              disableTouchListener={true}
+          >
             <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
           </Tooltip>
           <br />
-          <Form.Check inline className="small" checked={that.state.logmode} label={<span title={"Scales the glyphs on the map logarithmically."}>Log</span>} type={"checkbox"} name={"a"} id={`inline-checkbox-2`}
-            onChange={() => {that.setState({logmode: !that.state.logmode});}} />
-          <Form.Check inline className="small" checked={that.state.ppmmode} label={<span title={"Scales the glyphs on the map according to the number of people in each country/region."}>Population</span>} type={"checkbox"} name={"a"} id={`inline-checkbox-3`}
-            onChange={() => {that.setState({ppmmode: !that.state.ppmmode});}} /><br />
+          <Form.Check
+              inline
+              className="small"
+              checked={that.state.logmode}
+              label={
+                <Tooltip
+                    title="Scales the size of the glyphs on the map logarithmically."
+                    small={"true"}
+                    arrow
+                    disableTouchListener={true}
+                >
+                  <span>Log</span>
+                </Tooltip>
+              }
+              type={"checkbox"}
+              name={"a"}
+              id={`inline-checkbox-2`}
+              onChange={() => {
+                that.setState({
+                  logmode: !that.state.logmode
+                });
+              }}
+          />
+          <Form.Check
+              inline
+              className="small"
+              checked={that.state.ppmmode}
+              label={
+                <Tooltip
+                    title="Scales the size of the glyphs on the map according to the number of people in the location."
+                    small={"true"}
+                    arrow
+                    disableTouchListener={true}
+                >
+                  <span>Population</span>
+                </Tooltip>
+              }
+              type={"checkbox"}
+              name={"a"}
+              id={`inline-checkbox-3`}
+              onChange={() => {
+                that.setState({
+                  ppmmode: !that.state.ppmmode
+                });
+              }}
+          /><br />
           {
             that.state.momentum === "none" && !that.state.playmode &&
             [
               <span className="small text-muted mr-2">Project testing rates:</span>,
-              <Tooltip title="Display blue bubbles projecting how many confirmed cases there might be if local testing rate was coinciding with global average." small arrow>
+              <Tooltip
+              title="Display blue bubbles projecting how many confirmed cases there might be if local testing rate was coinciding with global average."
+              small={"true"}
+              arrow
+              disableTouchListener={true}
+              >
                 <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
               </Tooltip>,
               <br/>,
