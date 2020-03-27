@@ -36,6 +36,16 @@ import {JHDatasourceProvider} from "./datasource/JHDatasourceProvider";
 import * as Population from "./Population";
 import Utils from "./Utils";
 
+import { withStyles } from '@material-ui/core/styles';
+
+const LightTooltip = withStyles(theme => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+  },
+}))(Tooltip);
+
 class MapChart extends Map {
 
   constructor(props) {
@@ -148,7 +158,7 @@ class MapChart extends Map {
                     arrow
                     disableTouchListener={true}
                 >
-                  <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+                  <span class="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip>
                 <Form.Control value={that.state.momentum}
                               style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm"
@@ -167,7 +177,7 @@ class MapChart extends Map {
                     arrow
                     disableTouchListener={true}
                 >
-                  <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+                  <span class="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip>
                 <br/>
                 <Form.Check
@@ -411,7 +421,7 @@ class MapChart extends Map {
               }}/>
             }
             {that.leafletMap(ds)}
-            {/*that.leaderboard(ds)*/}
+            {that.leaderboard(ds)}
           </>
       );
     }
@@ -423,32 +433,77 @@ class MapChart extends Map {
         <table>
           <thead>
             <tr>
-                <th>Country</th>
-                <th align={"center"}>Containment</th>
+                <td className={"p-1 valign-top text-muted"}></td>
+                <td><b>Country</b></td>
+                <td></td>
+                <td className={"p-1"} align={"center"}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></td>
+                <td className={"p-1 bg-danger text-light"} align={"center"}><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></td>
+                <td className={"p-1 bg-success text-light"} align={"center"}><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></td>
+                <td className={"p-1 bg-dark text-light"} align={"center"}><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></td>
             </tr>
           </thead>
-        {
-          Object.keys(ds.data).map((name, locationIndex) => {
-            if(name !== "Canada") {
-              let containmentScore = ds.data[name].containmentScore;
-              if(containmentScore === null) {
-                  containmentScore = "N/A";
-              }
-              return (
-                <tbody>
-                  <tr>
-                    <td>{name}</td>
-                    <td align={"center"}>
-                      <div className={`containmentScore containmentScore${containmentScore}`}>
-                        {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              )
+          <tbody>
+            {
+              Object.keys(ds.data).sort((a, b) => {
+                a = ds.data[a].absolute.current.active;
+                b = ds.data[b].absolute.current.active;
+                if(a === null && b === null) {
+                  return 0;
+                } else if(a === null) {
+                  return 1;
+                } else if(b === null) {
+                  return -1;
+                } else {
+                  return (a >= b) ? -1 : 1;
+                }
+              }).map((name, locationIndex) => {
+                if(name !== "Canada") {
+                  let confirmed = ds.data[name].absolute.current.confirmed;
+                  let active = ds.data[name].absolute.current.active;
+                  let recovered = ds.data[name].absolute.current.recovered;
+                  let deceased = ds.data[name].absolute.current.deceased;
+                  let containmentScore = ds.data[name].containmentScore;
+                  if(containmentScore === null) {
+                    containmentScore = "N/A";
+                  }
+                  return (
+                    <tr className="locationSelect" onClick={() =>{
+                          this.setState({
+                              lng: this.state.datasource.locations[name][0],
+                              lat: this.state.datasource.locations[name][1],
+                              zoom: 5 + Math.random() / 10
+                          })
+                      }}>
+                      <td className={"p-1 valign-top text-muted"}>{locationIndex + 1}</td>
+                      <td>{name}</td>
+                      <td className={"p-1 stat"}>
+                        <LightTooltip
+                          title={
+                            <div style={{textAlign: "justify"}}>
+                              <b>Containment Score</b> reflects the spread of COVID19
+                              in this region, based on weighted average growth
+                              of confirmed cases over the past 1, 3 and 7 days. From worst (0/10) to best (10/10).
+                            </div>
+                          }
+                          small={"true"}
+                          arrow
+                          disableTouchListener={true}
+                        >
+                          <div className={"containmentScore containmentScore" + containmentScore}>
+                            {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
+                          </div>
+                        </LightTooltip>
+                      </td>
+                      <td className={"p-1 stat"} align={"right"}>{Utils.rounded(active)}</td>
+                      <td className={"p-1 stat bg-danger text-light"} align={"right"}>{Utils.rounded(confirmed)}</td>
+                      <td className={"p-1 stat bg-success text-light"} align={"right"}>{Utils.rounded(recovered)}</td>
+                      <td className={"p-1 stat bg-dark text-light"} align={"right"}>{Utils.rounded(deceased)}</td>
+                    </tr>
+                  )
+                }
+              })
             }
-          })
-        }
+          </tbody>
         </table>
       </div>
     );
@@ -628,7 +683,9 @@ class MapChart extends Map {
     let deceased = data.absolute.current.deceased;
     let confirmedProjected = data.absolute.current.confirmedProjected;
     let containmentScore = data.containmentScore;
-
+    if(containmentScore === null) {
+      containmentScore = "N/A";
+    }
     try {
       return (
         <div>
