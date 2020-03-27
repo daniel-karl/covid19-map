@@ -473,20 +473,44 @@ class MapChart extends Map {
             {
               Object.keys(ds.data).sort((a, b) => {
                 if (this.state.leadership==="active") {
-                   a = ds.data[a].absolute.current.active;
-                   b = ds.data[b].absolute.current.active;
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.active;
+                      b = ds.data[b].ppm.current.active;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.active;
+                      b = ds.data[b].absolute.current.active;
+		   } 
 		}
 		else if (this.state.leadership==="deceased") {
-                   a = ds.data[a].absolute.current.deceased;
-                   b = ds.data[b].absolute.current.deceased;
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.deceased;
+                      b = ds.data[b].ppm.current.deceased;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.deceased;
+                      b = ds.data[b].absolute.current.deceased;
+		   } 
 		}
 		else if (this.state.leadership==="confirmed") {
-                   a = ds.data[a].absolute.current.confirmed;
-                   b = ds.data[b].absolute.current.confirmed;
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.confirmed;
+                      b = ds.data[b].ppm.current.confirmed;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.confirmed;
+                      b = ds.data[b].absolute.current.confirmed;
+		   } 
 		}
 		else if (this.state.leadership==="recovered") {
-                   a = ds.data[a].absolute.current.recovered;
-                   b = ds.data[b].absolute.current.recovered;
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.recovered;
+                      b = ds.data[b].ppm.current.recovered;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.recovered;
+                      b = ds.data[b].absolute.current.recovered;
+		   } 
 		}
                 if(a === null && b === null) {
                   return 0;
@@ -499,10 +523,18 @@ class MapChart extends Map {
                 }
               }).map((name, locationIndex) => {
                 if(name !== "Canada") {
-                  let confirmed = ds.data[name].absolute.current.confirmed;
-                  let active = ds.data[name].absolute.current.active;
-                  let recovered = ds.data[name].absolute.current.recovered;
-                  let deceased = ds.data[name].absolute.current.deceased;
+                  let confirmed = (this.state.ppmmode)?
+				ds.data[name].ppm.current.confirmed:
+				ds.data[name].absolute.current.confirmed;
+                  let active = (this.state.ppmmode)?
+				ds.data[name].ppm.current.active:
+				ds.data[name].absolute.current.active;
+                  let recovered = (this.state.ppmmode)?
+				ds.data[name].ppm.current.recovered:
+				ds.data[name].absolute.current.recovered;
+                  let deceased = (this.state.ppmmode)? 
+				ds.data[name].ppm.current.deceased:
+				ds.data[name].absolute.current.deceased;
                   let containmentScore = ds.data[name].containmentScore;
                   if(containmentScore === null) {
                     containmentScore = "N/A";
