@@ -21,7 +21,7 @@ import {
   faQuestionCircle, 
   faBug, 
   faBalanceScale, 
-  faVials,
+  faVial,
   faStepBackward,
   faStepForward,
   faShieldAlt
@@ -784,7 +784,7 @@ class MapChart extends Map {
             </Badge>
             &nbsp;&middot;&nbsp;
             <Badge variant={"primary"}>
-                <FontAwesomeIcon icon={faVials}/>&nbsp;
+                <FontAwesomeIcon icon={faVial}/>&nbsp;
                 { Testing.RATES[name] && <span>{Utils.rounded(Testing.RATES[name])} tested</span>}
                 { !Testing.RATES[name] && <span>No testing data</span>}
             </Badge>
