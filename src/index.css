@@ -75,6 +75,11 @@ body {
   .leaderboard {
     display: none !important;
   }
+
+  .timeline {
+    left: 10px !important;
+    right: auto !important;
+  }
 }
 
 .navbar {
