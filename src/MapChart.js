@@ -411,10 +411,48 @@ class MapChart extends Map {
               }}/>
             }
             {that.leafletMap(ds)}
+            {/*that.leaderboard(ds)*/}
           </>
       );
     }
   }
+
+  leaderboard = (ds) => {
+    return (
+      <div class="leaderboard">
+        <table>
+          <thead>
+            <tr>
+                <th>Country</th>
+                <th align={"center"}>Containment</th>
+            </tr>
+          </thead>
+        {
+          Object.keys(ds.data).map((name, locationIndex) => {
+            if(name !== "Canada") {
+              let containmentScore = ds.data[name].containmentScore;
+              if(containmentScore === null) {
+                  containmentScore = "N/A";
+              }
+              return (
+                <tbody>
+                  <tr>
+                    <td>{name}</td>
+                    <td align={"center"}>
+                      <div className={`containmentScore containmentScore${containmentScore}`}>
+                        {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              )
+            }
+          })
+        }
+        </table>
+      </div>
+    );
+  };
 
   leafletMap = (ds) => {
     const position = [this.state.lat, this.state.lng];
@@ -471,7 +509,7 @@ class MapChart extends Map {
         size = this.scalePpm(size, pop);
         size = this.scaleLogAndPpm(size);
         let coordinates = this.state.datasource.locations[name];
-        if (size > 0 && name !== "US, US") {
+        if (size > 0 && name !== "US, US" && name !== "Canada") {
           return (
               <CircleMarker
                   key={"change_" + locationIndex}
@@ -558,7 +596,7 @@ class MapChart extends Map {
   };
 
   marker = (index, coordinates, color, size, data, name, type, opacity) => {
-    if(size > 0 && name !== "US, US") {
+    if(size > 0 && name !== "US, US" && name !== "Canada") {
       return (
         // bubble
         <CircleMarker

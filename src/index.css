@@ -260,3 +260,100 @@ body {
   line-height: 12px !important;
   height: auto !important;
 }
+
+.leaderboard {
+  position: absolute;
+  display: inline-block;
+  top: 10px;
+  right: 10px;
+  background: #f8f9faf0;
+  padding: 10px;
+  z-index: 999;
+  box-shadow: 0px 0px 5px #999;
+  overflow: scroll;
+  max-height: 500px;
+  width: 240px;
+  font-size: 12px;
+}
+
+.containmentScore {
+  margin-top:3px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+  color: #999;
+  border: 1px solid #999;
+  text-align: center;
+  line-height: 30px;
+  font-weight: bold;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  font-size: 10px !important;
+}
+
+.containmentScore0 {
+  background: #a50026;
+  border: none;
+  color: white;
+}
+
+.containmentScore1 {
+  background: #d73027;
+  border: none;
+  color: white;
+}
+
+.containmentScore2 {
+  background: #f46d43;
+  border: none;
+  color: white;
+}
+
+.containmentScore3 {
+  background: #fdae61;
+  color: black;
+  border: none;
+}
+
+.containmentScore4 {
+  background: #fee08b;
+  color: black;
+  border: none;
+}
+
+.containmentScore5 {
+  background: #ffffbf;
+  color: black;
+  border: none;
+}
+
+.containmentScore6 {
+  background: #d9ef8b;
+  color: black;
+  border: none;
+}
+
+.containmentScore7 {
+  background: #a6d96a;
+  color: black;
+  border: none;
+}
+
+.containmentScore8 {
+  background: #66bd63;
+  color: white;
+  border: none;
+}
+
+.containmentScore9 {
+  background: #1a9850;
+  color: white;
+  border: none;
+}
+
+.containmentScore10 {
+  background: #006837;
+  color: white;
+  border: none;
+}
