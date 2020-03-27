@@ -1579,8 +1579,8 @@ class MapChart extends Map {
       return value;
     }
     if(population) {
-      if((value > 0)&&(population>ONE_M)) {
-        return ONE_M * value / population * 10;
+      if((value > 0) && ( population > ONE_M)) {
+        return ONE_M * value / population * 30;
       }
     }
     return 0;
@@ -1588,7 +1588,7 @@ class MapChart extends Map {
 
   scaleLogAndPpm = (value) => {
     if(this.state.logmode && this.state.ppmmode) {
-      return value / 10;
+      return value / 2;
     }
     return value;
   };
