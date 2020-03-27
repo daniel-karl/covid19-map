@@ -109,8 +109,8 @@ body {
 
 .timeline {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  top: 10px;
+  right: 390px;
   background: #f8f9faf0;
   padding: 10px;
   padding-top: 5px;
