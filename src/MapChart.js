@@ -68,7 +68,7 @@ class MapChart extends Map {
       mapstyle: "https://{s}.tile.osm.org/{z}/{x}/{y}.png",
       selectedData: ["projected", "confirmed", "recovered", "deceased"],
       datasource: null,
-
+      leadership: "active",
 
       lat: 0,
       lng: 0,
@@ -437,19 +437,81 @@ class MapChart extends Map {
           <thead>
             <tr>
                 <td className={"p-1 valign-top text-muted"}></td>
-                <td className={"p-1 bg-danger text-light"} align={"center"}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></td>
-                <td className={"p-1"}><b>Country</b></td>
-                <td></td>
-                <td className={"p-1 text-danger"} align={"center"}><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></td>
-                <td className={"p-1 text-success"} align={"center"}><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></td>
-                <td className={"p-1 text-dark"} align={"center"}><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></td>
+                <td className={"p-1 bg-danger text-light"} align={"center"}><button><FontAwesomeIcon icon={faProcedures} size={"lg"}/></button></td>
+                <td className={"p-1"}><button
+                  onClick={() => {
+                    this.setState({
+                      leadership: "active"
+                    });
+                  }}
+	            >Country</button></td>
+                <td className={"p-1"}><button>Score</button></td>
+                <td className={"p-1 text-danger"} align={"center"}><button
+                  onClick={() => {
+                    this.setState({
+                      leadership: "confirmed"
+                    });
+                  }}
+	            ><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></button></td>
+                <td className={"p-1 text-success"} align={"center"}><button
+                  onClick={() => {
+                    this.setState({
+                      leadership: "recovered"
+                    });
+                  }}
+	            ><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></button></td>
+                <td className={"p-1 text-dark"} align={"center"}><button
+                  onClick={() => {
+                    this.setState({
+                      leadership: "deceased"
+                    });
+                  }}
+	            ><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></button></td>
             </tr>
           </thead>
           <tbody>
             {
               Object.keys(ds.data).sort((a, b) => {
-                a = ds.data[a].absolute.current.active;
-                b = ds.data[b].absolute.current.active;
+                if (this.state.leadership==="active") {
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.active;
+                      b = ds.data[b].ppm.current.active;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.active;
+                      b = ds.data[b].absolute.current.active;
+		   } 
+		}
+		else if (this.state.leadership==="deceased") {
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.deceased;
+                      b = ds.data[b].ppm.current.deceased;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.deceased;
+                      b = ds.data[b].absolute.current.deceased;
+		   } 
+		}
+		else if (this.state.leadership==="confirmed") {
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.confirmed;
+                      b = ds.data[b].ppm.current.confirmed;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.confirmed;
+                      b = ds.data[b].absolute.current.confirmed;
+		   } 
+		}
+		else if (this.state.leadership==="recovered") {
+		   if (this.state.ppmmode) {
+                      a = ds.data[a].ppm.current.recovered;
+                      b = ds.data[b].ppm.current.recovered;
+		   }
+		   else {
+                      a = ds.data[a].absolute.current.recovered;
+                      b = ds.data[b].absolute.current.recovered;
+		   } 
+		}
                 if(a === null && b === null) {
                   return 0;
                 } else if(a === null) {
@@ -461,10 +523,18 @@ class MapChart extends Map {
                 }
               }).map((name, locationIndex) => {
                 if(name !== "Canada") {
-                  let confirmed = ds.data[name].absolute.current.confirmed;
-                  let active = ds.data[name].absolute.current.active;
-                  let recovered = ds.data[name].absolute.current.recovered;
-                  let deceased = ds.data[name].absolute.current.deceased;
+                  let confirmed = (this.state.ppmmode)?
+				ds.data[name].ppm.current.confirmed:
+				ds.data[name].absolute.current.confirmed;
+                  let active = (this.state.ppmmode)?
+				ds.data[name].ppm.current.active:
+				ds.data[name].absolute.current.active;
+                  let recovered = (this.state.ppmmode)?
+				ds.data[name].ppm.current.recovered:
+				ds.data[name].absolute.current.recovered;
+                  let deceased = (this.state.ppmmode)? 
+				ds.data[name].ppm.current.deceased:
+				ds.data[name].absolute.current.deceased;
                   let containmentScore = ds.data[name].containmentScore;
                   if(containmentScore === null) {
                     containmentScore = "N/A";
