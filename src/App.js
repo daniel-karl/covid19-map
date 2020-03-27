@@ -12,9 +12,10 @@ import { faBiohazard, faHeartBroken, faHeartbeat} from '@fortawesome/free-solid-
 import Utils from "./Utils";
 
 function App() {
-  const [totConf, setTotConf] = useState(0);
-  const [totRec, setTotRec] = useState(0);
-  const [totDead, setTotDead] = useState(0);
+  const [totalConfirmed, setTotalConfirmed] = useState(0);
+  const [totalRecovered, setTotalRecovered] = useState(0);
+  const [totalDeceased, setTotalDeceased] = useState(0);
+  const [totalConfirmedProjected, setTotalConfirmedProjected] = useState(0);
 
   return (
     [
@@ -24,20 +25,27 @@ function App() {
             <span className={"mapio"}><b>MAP</b><span className="text-secondary">.IO</span></span>
         </Navbar.Brand>
           <span>
-            <span className={"small text-danger mr-2"}>
-                <FontAwesomeIcon icon={faBiohazard} className={"mr-1"} />
-                {Utils.rounded(totConf)}
-            </span>
             {
-              totRec > 0 &&
-              <span className={"small text-success mr-2"}>
-                  <FontAwesomeIcon icon={faHeartbeat} className={"mr-1"} />
-                  {Utils.rounded(totRec)}
+              totalConfirmedProjected > totalConfirmed &&
+              <span className={"small text-primary mr-2"}>
+                <FontAwesomeIcon icon={faBiohazard} className={"mr-1"}/>
+                {Utils.rounded(totalConfirmedProjected)}
               </span>
             }
+            {
+              totalConfirmedProjected <= totalConfirmed &&
+              <span className={"small text-danger mr-2"}>
+                <FontAwesomeIcon icon={faBiohazard} className={"mr-1"}/>
+                {Utils.rounded(totalConfirmed)}
+              </span>
+            }
+            <span className={"small text-success mr-2"}>
+              <FontAwesomeIcon icon={faHeartbeat} className={"mr-1"} />
+              {Utils.rounded(totalRecovered)}
+            </span>
             <span className={"small mr-2"}>
-                <FontAwesomeIcon icon={faHeartBroken} className={"mr-1"} />
-                {Utils.rounded(totDead)}
+              <FontAwesomeIcon icon={faHeartBroken} className={"mr-1"} />
+              {Utils.rounded(totalDeceased)}
             </span>
           </span>
       </Navbar>,
@@ -47,9 +55,10 @@ function App() {
             <MapChart
                 key={"mapChart"}
                 style={{marginTop: "50px"}}
-                setTotConf={setTotConf}
-                setTotRec={setTotRec}
-                setTotDead={setTotDead}
+                setTotalConfirmed={setTotalConfirmed}
+                setTotalRecovered={setTotalRecovered}
+                setTotalDeceased={setTotalDeceased}
+                setTotalConfirmedProjected={setTotalConfirmedProjected}
             />
           </Col>
         </Row>

@@ -14,7 +14,6 @@
     "gh-pages": "^2.2.0",
     "jquery": "^3.4.1",
     "leaflet": "^1.6.0",
-    "multiselect-react-dropdown": "^1.4.7",
     "papaparse": "^5.1.1",
     "react": "^16.13.0",
     "react-bootstrap": "^1.0.0-beta.17",
