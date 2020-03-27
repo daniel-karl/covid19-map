@@ -57,7 +57,7 @@ class MapChart extends Map {
       setTotRec: props.setTotRec,
       setTotDead: props.setTotDead,
       chart: "pie",
-      factor: 50,
+      factor: 35,
       width: 2,
       logmode: true,
       momentum: "none",
@@ -73,7 +73,7 @@ class MapChart extends Map {
       datasource: "jh2",
       recoveryMode: false,
 
-      maxSize: 67021,
+      maxSize: 83836,
 
       // leaflet map
       lat: 0,
@@ -134,18 +134,6 @@ class MapChart extends Map {
           layer.bringToFront();
         }
       });
-
-    /*
-    Object.values(layers)
-      .filter((layer) => {
-        return typeof layer.options.priority !== "undefined";
-      })
-      .sort((layerA, layerB) => {
-        return layerA.options.priority - layerB.options.priority;
-      })
-      .forEach((layer) => {
-        layer.bringToFront();
-      });*/
   }
 
   get_sums(NAME, extension) {
@@ -766,7 +754,7 @@ class MapChart extends Map {
             [
               <span className="small text-muted mr-2">Project testing rates:</span>,
               <Tooltip
-              title="Display blue bubbles projecting how many confirmed cases there might be if local testing rate was coinciding with global average."
+              title="Display how many confirmed cases there might be if local testing rate was coinciding with global average."
               small={"true"}
               arrow
               disableTouchListener={true}
@@ -807,7 +795,7 @@ class MapChart extends Map {
               ></ReactBootstrapSlider>
             ]
           }
-          <span className="small text-muted mr-2">Bubble size:</span><br/>
+          <span className="small text-muted mr-2">Glyph size:</span><br/>
           <ReactBootstrapSlider value={this.state.factor} change={e => {this.setState({ factor: e.target.value, width: e.target.value / 10 });}} step={1} max={100} min={1}></ReactBootstrapSlider><br />
           {/*<Form.Check inline title="Represent data as bubbles. Hover bubbles on map to see more details." className="small" checked={that.state.chart==="pie" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-1`} onChange={() => {that.setState({chart: "pie"});}}/><br />*/}
           {/*<Form.Check inline title="Represent data as vertical bars. Hover bars on map to see more details." className="small hideInMomentum" checked={that.state.chart==="bar" } label="Bars" type={"radio"} name={"a"} id={`inline-radio-2`} onChange={() => {that.setState({chart: "bar"});}} disabled={that.state.momentum!=="none" ? true : false}/>
