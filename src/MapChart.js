@@ -129,7 +129,7 @@ class MapChart extends Map {
     }
     else {
       let that = this;
-      let ds = this.state.datasource.datasets[this.state.datasource.datasets.length - 1 + this.state.dayOffset];
+      let ds = this.state.datasource.datasets[Math.max(0, this.state.datasource.datasets.length - 1 + this.state.dayOffset)];
       that.state.setTotalConfirmed(ds.totalConfirmed);
       that.state.setTotalRecovered(ds.totalRecovered);
       that.state.setTotalDeceased(ds.totalDeceased);
@@ -294,10 +294,10 @@ class MapChart extends Map {
                   className={this.state.dayOffset < 0 ? "btn btn-sm btn-dark leftTime" : "btn btn-sm btn-outline-dark leftTime"}
                   style={{height: "30px", lineHeight: "20px"}}
                   onClick={() => {
-                    this.setState({
-                      dayOffset: this.state.dayOffset - 1,
-                      testmode: false
-                    });
+                      this.setState({
+                         dayOffset: this.state.dayOffset - 1,
+                         testmode: false
+                      });
                   }}
               ><FontAwesomeIcon icon={faStepBackward}/></button>
 
@@ -340,33 +340,37 @@ class MapChart extends Map {
                     var now = new Date();
                     var startDate = new Date("January 22, 2020 00:00:00");
                     const oneDay = 24 * 60 * 60 * 1000;
-                    this.state.dayOffset = -Math.round(Math.abs((now - startDate) / oneDay));
-                    this.state.testmode = false;
-                    this.state.testscale = 0;
-                    this.state.playmode = true;
-                    this.state.playpause = false;
-                    this.state.lat = 30.5928;
-                    this.state.lng = 114.3055;
-                    this.state.zoom = 3.01;
+                    this.setState({
+                      dayOffset:  -Math.round(Math.abs((now - startDate) / oneDay)),
+                      testmode: false,
+                      testscale: 0,
+                      playmode: true,
+                      playpause: false,
+                      lat: 30.5928,
+                      lng: 114.3055,
+                      zoom: 3.01
+                    });
                     let interval = setInterval(() => {
                       if (!that.state.playmode) {
                         clearInterval(interval);
-                        this.state.dayOffset = 0;
-                        this.render();
+                        this.setState({
+                            dayOffset: 0
+                        });
                         return;
                       }
                       if (!this.state.playpause) {
-                        this.state.dayOffset++;
-                        this.render();
+                        this.setState({
+                            dayOffset: this.state.dayOffset + 1
+                        });
                         if (this.state.dayOffset === 0) {
                           document.getElementsByClassName("todayTime")[0].style.display = "inline";
                           document.getElementsByClassName("play")[0].style.display = "inline";
                           document.getElementsByClassName("leftTime")[0].style.display = "inline";
                           document.getElementsByClassName("midTime")[0].style.display = "none";
                           this.setState({
-                              playmode: false,
-                              testscale: 0,
-                              testmode: false
+                             playmode: false,
+                             testscale: 0,
+                             testmode: false
                           });
                         }
                       }
@@ -378,8 +382,9 @@ class MapChart extends Map {
                   className={"btn btn-sm pause " + (this.state.playpause ? "btn-success" : "btn-outline-dark")}
                   style={this.state.playmode ? {height: "30px", lineHeight: "20px"} : {display: "none"}}
                   onClick={() => {
-                    this.state.playpause = !this.state.playpause;
-                    this.render();
+                      this.setState({
+                          playpause: !this.state.playpause
+                      });
                   }}
               >
                 {
@@ -402,11 +407,10 @@ class MapChart extends Map {
                     document.getElementsByClassName("midTime")[0].style.display = "none";
                     this.state.playmode = false;
                     this.state.testscale = 0;
-                    this.setState({
-                      lat: 0,
-                      lng: 0,
-                      zoom: 1.99
-                    });
+                    this.state.lng = 0;
+                    this.state.lat = 0;
+                    this.state.zoom = 1.99;
+                    this.render();
                   }}
               ><FontAwesomeIcon icon={faStopCircle}/> Stop
               </button>
