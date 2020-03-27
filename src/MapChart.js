@@ -1,11 +1,9 @@
 import React, {memo} from "react";
-import { Map, TileLayer, Marker, Tooltip as LTooltip,
+import { Map, TileLayer, Tooltip as LTooltip,
     CircleMarker, LayerGroup } from "react-leaflet";
 
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
-import { CSSTransitionGroup } from 'react-transition-group'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -160,7 +158,7 @@ class MapChart extends Map {
                     arrow
                     disableTouchListener={true}
                 >
-                  <span class="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+                  <span className="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip>
                 <Form.Control value={that.state.momentum}
                               style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm"
@@ -179,7 +177,7 @@ class MapChart extends Map {
                     arrow
                     disableTouchListener={true}
                 >
-                  <span class="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+                  <span className="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip>
                 <br/>
                 <Form.Check
@@ -434,7 +432,7 @@ class MapChart extends Map {
 
   leaderboard = (ds) => {
     return (
-      <div class="leaderboard">
+      <div className="leaderboard">
         <table>
           <thead>
             <tr>
@@ -512,7 +510,9 @@ class MapChart extends Map {
                   b = ds.data[b].containmentScore;
 		        } else {
                   a = ds.data[a][mode].current[this.state.leadership];
+                  a = isNaN(a) ? 0 : a;
                   b = ds.data[b][mode].current[this.state.leadership];
+                  b = isNaN(b) ? 0 : b;
                 }
                 if(a === null && b === null) {
                   return 0;
@@ -525,18 +525,11 @@ class MapChart extends Map {
                 }
               }).map((name, locationIndex) => {
                 if(name !== "Canada") {
-                  let confirmed = (this.state.ppmmode)?
-				ds.data[name].ppm.current.confirmed:
-				ds.data[name].absolute.current.confirmed;
-                  let active = (this.state.ppmmode)?
-				ds.data[name].ppm.current.active:
-				ds.data[name].absolute.current.active;
-                  let recovered = (this.state.ppmmode)?
-				ds.data[name].ppm.current.recovered:
-				ds.data[name].absolute.current.recovered;
-                  let deceased = (this.state.ppmmode)? 
-				ds.data[name].ppm.current.deceased:
-				ds.data[name].absolute.current.deceased;
+                  let confirmed = (this.state.ppmmode) ? ds.data[name].ppm.current.confirmed : ds.data[name].absolute.current.confirmed;
+                  let active = (this.state.ppmmode) ? ds.data[name].ppm.current.active : ds.data[name].absolute.current.active;
+                  active = isNaN(active) ? "N/A" : active;
+                  let recovered = (this.state.ppmmode) ? ds.data[name].ppm.current.recovered : ds.data[name].absolute.current.recovered;
+                  let deceased = (this.state.ppmmode) ? ds.data[name].ppm.current.deceased : ds.data[name].absolute.current.deceased;
                   let containmentScore = ds.data[name].containmentScore;
                   if(containmentScore === null) {
                     containmentScore = "N/A";
