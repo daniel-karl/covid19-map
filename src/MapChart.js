@@ -1,10 +1,11 @@
 import React, {memo} from "react";
-import ReactDOM from "react-dom";
-import { Map, TileLayer, Marker, Tooltip,
+import { Map, TileLayer, Marker, Tooltip as LTooltip,
     CircleMarker, LayerGroup } from "react-leaflet";
 
 import * as Testing from "./TestingRates";
 import * as Population from "./Population";
+
+import Tooltip from '@material-ui/core/Tooltip';
 
 import Utils from "./Utils";
 
@@ -680,12 +681,15 @@ class MapChart extends Map {
         <button hidden={that.state.minimized} className={"btn-collapse"} onClick={() => {that.setState({minimized: true})}}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
         <button hidden={!that.state.minimized} className={"btn-collapse"} onClick={() => {that.setState({minimized: false})}}>open</button>
         <div hidden={that.state.minimized}>
-          <span className="small text-muted">Mode:</span>
-          <Form.Control title={"Live mode: Show live data (updated daily). Change: Show increase/decrease in numbers since last 1, 3 or 7 days."} value={that.state.momentum} style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm" as="select" onChange={(e) => {that.setState({momentum: e.nativeEvent.target.value, chart: "pie", testmode: false, testscale: 0});}}>
-            <option value="none">Live</option>
-            <option value="last1">Change since last 24 hours</option>
-            <option value="last3">Change since last 3 days</option>
-            <option value="last7">Change since last 7 days</option>
+          <span className="small text-muted mr-2">Mode:</span>
+          <Tooltip title={<span><b>Live mode:</b> Glyphs show confirmed, recovered and deceased numbers (updated daily).<br /><br /><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>} small arrow>
+            <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+          </Tooltip>
+          <Form.Control value={that.state.momentum} style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm" as="select" onChange={(e) => {that.setState({momentum: e.nativeEvent.target.value, chart: "pie", testmode: false, testscale: 0});}}>
+            <option value="none">Live mode</option>
+            <option value="last1">Momentum mode (last 24 hours)</option>
+            <option value="last3">Momentum mode (last 3 days)</option>
+            <option value="last7">Momentum mode (last 7 days)</option>
           </Form.Control>
           {/*<Multiselect
             selectedValues={this.state.selectedData}
@@ -695,7 +699,9 @@ class MapChart extends Map {
             showCheckbox={true}
           />*/}
           <span className="small text-muted mr-2">Normalization:</span>
-          <FontAwesomeIcon size={"xs"} icon={faQuestion} title={"Scale the glyphs on the map according to different criteria."}/>
+          <Tooltip title="Scale the glyphs on the map according to different criteria." small arrow>
+            <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+          </Tooltip>
           <br />
           <Form.Check inline className="small" checked={that.state.logmode} label={<span title={"Scales the glyphs on the map logarithmically."}>Log</span>} type={"checkbox"} name={"a"} id={`inline-checkbox-2`}
             onChange={() => {that.setState({logmode: !that.state.logmode});}} />
@@ -705,7 +711,9 @@ class MapChart extends Map {
             that.state.momentum === "none" && !that.state.playmode &&
             [
               <span className="small text-muted mr-2">Project testing rates:</span>,
-              <FontAwesomeIcon size={"xs"} icon={faQuestion} title={"Display blue bubbles projecting how many confirmed cases there might be if local testing rate was coinciding with global average."}/>,
+              <Tooltip title="Display blue bubbles projecting how many confirmed cases there might be if local testing rate was coinciding with global average." small arrow>
+                <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
+              </Tooltip>,
               <br/>,
               <ReactBootstrapSlider
                   ticks={[0, 1, 2, 3]}
@@ -1044,31 +1052,16 @@ class MapChart extends Map {
         let val;
         switch (this.state.momentum) {
           case "last1":
-            if(this.recovered[rowId]) {
-              size = momentumLast1 - this.recovered[rowId].momentumLast1;
-              val = valMin1 - this.recovered[rowId].valMin1;
-            } else {
-              size = momentumLast1;
-              val = valMin1;
-            }
+            size = momentumLast1 - this.recovered[rowId].momentumLast1;
+            val = valMin1 - this.recovered[rowId].valMin1;
             break;
           case "last3":
-            if(this.recovered[rowId]) {
-              size = momentumLast3 - this.recovered[rowId].momentumLast3;
-              val = valMin3 - this.recovered[rowId].valMin3;
-            } else {
-              size = momentumLast3;
-              val = valMin3;
-            }
+            size = momentumLast3 - this.recovered[rowId].momentumLast3;
+            val = valMin3 - this.recovered[rowId].valMin3;
             break;
           case "last7":
-            if(this.recovered[rowId]) {
-              size = momentumLast7 - this.recovered[rowId].momentumLast7;
-              val = valMin7 - this.recovered[rowId].valMin7;
-            } else {
-              size = momentumLast7;
-              val = valMin7;
-            }
+            size = momentumLast7 - this.recovered[rowId].momentumLast7;
+            val = valMin7 - this.recovered[rowId].valMin7;
             break;
           default:
             alert("something went wrong");
@@ -1217,9 +1210,9 @@ class MapChart extends Map {
           opacity={0}
           fillOpacity={opacity}
         >
-          <Tooltip direction="bottom" offset={[0, 20]} opacity={1}>
+          <LTooltip direction="bottom" offset={[0, 20]} opacity={1}>
             {this.tooltip(name, rowId)}
-          </Tooltip>
+          </LTooltip>
         </CircleMarker>
       );
     }
@@ -1555,8 +1548,7 @@ class MapChart extends Map {
 
   sleep = async (msec) => {
     return new Promise(resolve => setTimeout(resolve, msec));
-  }
-
+  };
 }
 
 export default memo(MapChart);
