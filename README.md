@@ -35,6 +35,31 @@ npm start
 npm run deploy      # Please do not forget to include link to license and mention the original author(s) as given below
 ```
 
+### Data model
+With:
+- `$dataset = this.state.datasource.datasets[$idx]` // 1 per day
+- `$data = $dataset.data[$locationName]` // 1 per location
+- `$value = {confirmed|active|recovered|deceased|projectedConfirmed}`
+
+Then:
+- `$data.absolute.current[$value]`
+- `$data.absolute.growthLast1Day[$value]`
+- `$data.absolute.growthLast3Days[$value]`
+- `$data.absolute.growthLast7Days[$value]`
+- `$data.ppm.current[$value]`
+- `$data.ppm.growthLast1Day[$value]`
+- `$data.ppm.growthLast3Days[$value]`
+- `$data.ppm.growthLast7Days[$value]`
+- `$data.containmentScore`
+
+Further:
+- `$dataset.totalConfirmed`
+- `$dataset.totalRecovered`
+- `$dataset.totalDeceased`
+- `$dataset.totalActive`
+- `$dataset.totalConfirmedProjected`
+- `$dataset.cameraCoordinates` // for theatre mode
+
 # Contributors
 - Daniel Karl 👨🏻‍🔧
 - Michael Baentsch 👨🏻‍🏫

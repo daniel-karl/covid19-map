@@ -23,7 +23,8 @@ import {
   faBalanceScale, 
   faBolt,
   faStepBackward,
-  faStepForward
+  faStepForward,
+  faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
 
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
@@ -34,6 +35,7 @@ import ReactBootstrapSlider from "react-bootstrap-slider";
 
 import {JHDatasourceProvider} from "./datasource/JHDatasourceProvider";
 import * as Population from "./Population";
+import * as Testing from "./TestingRates";
 import Utils from "./Utils";
 
 import { withStyles } from '@material-ui/core/styles';
@@ -437,81 +439,81 @@ class MapChart extends Map {
           <thead>
             <tr>
                 <td className={"p-1 valign-top text-muted"}></td>
-                <td className={"p-1 bg-danger text-light"} align={"center"}><button><FontAwesomeIcon icon={faProcedures} size={"lg"}/></button></td>
-                <td className={"p-1"}><button
+                <td className={"p-1 bg-danger text-light sortHeader"} align={"center"}><a
                   onClick={() => {
                     this.setState({
                       leadership: "active"
                     });
+                  }}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></a></td>
+                <td className={"p-1 sortHeader"}><a
+                  onClick={() => {
+                    this.setState({
+                      leadership: "name"
+                    });
                   }}
-	            >Country</button></td>
-                <td className={"p-1"}><button>Score</button></td>
-                <td className={"p-1 text-danger"} align={"center"}><button
+	            >Country</a></td>
+                <td className={"p-1 sortHeader"} align={"center"}>
+                    <LightTooltip
+                      title={
+                        <div style={{textAlign: "justify"}}>
+                          <b>Containment Score</b> reflects the spread of COVID19
+                          in this region, based on weighted average growth
+                          of confirmed cases over the past 1, 3 and 7 days. From worst (0/10) to best (10/10).
+                        </div>
+                      }
+                      small={"true"}
+                      disableTouchListener={true}
+                    >
+                        <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "containmentScore"
+                      });
+                    }}
+                  >
+                      <FontAwesomeIcon icon={faShieldAlt} size={"lg"}/>
+                      </a>
+                    </LightTooltip>
+                </td>
+                <td className={"p-1 text-danger sortHeader"} align={"center"}><a
                   onClick={() => {
                     this.setState({
                       leadership: "confirmed"
                     });
                   }}
-	            ><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></button></td>
-                <td className={"p-1 text-success"} align={"center"}><button
+	            ><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></a></td>
+                <td className={"p-1 text-success sortHeader"} align={"center"}><a
                   onClick={() => {
                     this.setState({
                       leadership: "recovered"
                     });
                   }}
-	            ><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></button></td>
-                <td className={"p-1 text-dark"} align={"center"}><button
+	            ><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></a></td>
+                <td className={"p-1 text-dark sortHeader"} align={"center"}><a
                   onClick={() => {
                     this.setState({
                       leadership: "deceased"
                     });
                   }}
-	            ><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></button></td>
+	            ><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></a></td>
             </tr>
           </thead>
           <tbody>
             {
               Object.keys(ds.data).sort((a, b) => {
-                if (this.state.leadership==="active") {
-		   if (this.state.ppmmode) {
-                      a = ds.data[a].ppm.current.active;
-                      b = ds.data[b].ppm.current.active;
-		   }
-		   else {
-                      a = ds.data[a].absolute.current.active;
-                      b = ds.data[b].absolute.current.active;
-		   } 
-		}
-		else if (this.state.leadership==="deceased") {
-		   if (this.state.ppmmode) {
-                      a = ds.data[a].ppm.current.deceased;
-                      b = ds.data[b].ppm.current.deceased;
-		   }
-		   else {
-                      a = ds.data[a].absolute.current.deceased;
-                      b = ds.data[b].absolute.current.deceased;
-		   } 
-		}
-		else if (this.state.leadership==="confirmed") {
-		   if (this.state.ppmmode) {
-                      a = ds.data[a].ppm.current.confirmed;
-                      b = ds.data[b].ppm.current.confirmed;
-		   }
-		   else {
-                      a = ds.data[a].absolute.current.confirmed;
-                      b = ds.data[b].absolute.current.confirmed;
-		   } 
-		}
-		else if (this.state.leadership==="recovered") {
-		   if (this.state.ppmmode) {
-                      a = ds.data[a].ppm.current.recovered;
-                      b = ds.data[b].ppm.current.recovered;
-		   }
-		   else {
-                      a = ds.data[a].absolute.current.recovered;
-                      b = ds.data[b].absolute.current.recovered;
-		   } 
-		}
+                let mode = this.state.ppmmode ? "ppm" : "absolute";
+                if (this.state.leadership==="name") {
+                  let c = a;
+                  a = b;
+                  b = c;
+		        }
+                else if (this.state.leadership==="containmentScore") {
+                  a = ds.data[a].containmentScore;
+                  b = ds.data[b].containmentScore;
+		        } else {
+                  a = ds.data[a][mode].current[this.state.leadership];
+                  b = ds.data[b][mode].current[this.state.leadership];
+                }
                 if(a === null && b === null) {
                   return 0;
                 } else if(a === null) {
@@ -551,22 +553,9 @@ class MapChart extends Map {
                       <td className={"p-1 stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
                       <td className={"p-1"}>{name}</td>
                       <td className={"p-1 stat"}>
-                        <LightTooltip
-                          title={
-                            <div style={{textAlign: "justify"}}>
-                              <b>Containment Score</b> reflects the spread of COVID19
-                              in this region, based on weighted average growth
-                              of confirmed cases over the past 1, 3 and 7 days. From worst (0/10) to best (10/10).
-                            </div>
-                          }
-                          small={"true"}
-                          arrow
-                          disableTouchListener={true}
-                        >
-                          <div className={"containmentScore containmentScore" + containmentScore}>
-                            {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
-                          </div>
-                        </LightTooltip>
+                        <div className={"containmentScore containmentScore" + containmentScore}>
+                          {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
+                        </div>
                       </td>
                       <td className={"p-1 stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
                       <td className={"p-1 stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
@@ -750,11 +739,8 @@ class MapChart extends Map {
 
 
   tooltip = (name, data) => {
-    let confirmed = data.absolute.current.confirmed;
-    let active = data.absolute.current.active;
-    let recovered = data.absolute.current.recovered;
-    let deceased = data.absolute.current.deceased;
-    let confirmedProjected = data.absolute.current.confirmedProjected;
+    let mode = this.state.ppmmode ? "ppm" : "absolute";
+    let unit = this.state.ppmmode ? "ppm" : "";
     let containmentScore = data.containmentScore;
     if(containmentScore === null) {
       containmentScore = "N/A";
@@ -764,21 +750,50 @@ class MapChart extends Map {
         <div>
           <div>
               <b>{name}</b><br />
-              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])} &middot; <span className={"text-danger"}><FontAwesomeIcon icon={faBiohazard}/> <span>{Utils.rounded(confirmed)}</span></span> &middot; <FontAwesomeIcon icon={faBolt}/> {Utils.rounded(1000000*confirmed/Population.ABSOLUTE[name])} ppm
+              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])}
+              &nbsp;&middot;&nbsp;
+              <span className={"text-danger"}>
+                <FontAwesomeIcon icon={faBiohazard}/>&nbsp;
+                {<span>{Utils.rounded(data[mode].current.confirmed)} {unit}</span>}
+              </span>
+              &nbsp;&middot;&nbsp;
+              <span className={"text-success"}>
+                <FontAwesomeIcon icon={faHeartbeat}/>&nbsp;
+                {<span>{Utils.rounded(data[mode].current.recovered)} {unit}</span>}
+              </span>
+              &nbsp;&middot;&nbsp;
+              <span className={"text-dark"}>
+                <FontAwesomeIcon icon={faHeartBroken}/>&nbsp;
+                {<span>{Utils.rounded(data[mode].current.deceased)} {unit}</span>}
+              </span>
           </div>
           <div>
-            <Badge variant={"danger"}><FontAwesomeIcon icon={faProcedures}/> {Utils.rounded(active)} active</Badge>
-            <Badge className="ml-1 mr-1" variant={"success"}><FontAwesomeIcon icon={faHeartbeat}/> {Utils.rounded(recovered)} recovered</Badge>
-            <Badge variant={"dark"}><FontAwesomeIcon icon={faHeartBroken}/> {Utils.rounded(deceased)} deceased</Badge><br />
             {
-              confirmedProjected > confirmed && this.state.testmode && this.state.testscale > 0 &&
-              <Badge variant={"primary"}><FontAwesomeIcon icon={faBiohazard}/> &gt;{Utils.rounded(confirmedProjected)} projected at global avg. testing rate</Badge>
+              data[mode].current.confirmedProjected > data[mode].current.confirmed && this.state.testmode && this.state.testscale > 0 &&
+              [
+                <Badge className={"text-primary"}>
+                  <FontAwesomeIcon icon={faBiohazard}/>&nbsp;
+                  &gt;{<span>{Utils.rounded(data[mode].current.confirmedProjected * this.state.testscale)} {unit} projected at {this.state.testscale}x global avg. testing rate</span>}
+                </Badge>,
+                <br />
+              ]
             }
+            <Badge variant={"danger"}>
+                <FontAwesomeIcon icon={faProcedures}/>&nbsp;
+                {<span>{Utils.rounded(data[mode].current.active)} {unit} active</span>}
+            </Badge>
+            &nbsp;&middot;&nbsp;
+            <Badge variant={"primary"}>
+                <FontAwesomeIcon icon={faProcedures}/>&nbsp;
+                { Testing.RATES[name] && <span>{Utils.rounded(Testing.RATES[name])} tested</span>}
+                { !Testing.RATES[name] && <span>No testing data</span>}
+            </Badge>
+            <br/>
           </div>
           <div className="stayAtHomeScoreLabel">
             {
               [
-                <span className="stayAtHomeAdvice">{this.stayAtHomeAdvice(active)}</span>,
+                <span className="stayAtHomeAdvice">{this.stayAtHomeAdvice(data.absolute.current.active)}</span>,
                 <br/>
               ]
             }

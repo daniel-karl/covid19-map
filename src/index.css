@@ -386,3 +386,8 @@ body {
 .valign-top {
   vertical-align: top;
 }
+
+.sortHeader {
+  font-weight: bold;
+  cursor: pointer;
+}
