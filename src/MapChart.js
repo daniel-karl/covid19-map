@@ -342,6 +342,7 @@ class MapChart extends Map {
                     const oneDay = 24 * 60 * 60 * 1000;
                     this.state.dayOffset = -Math.round(Math.abs((now - startDate) / oneDay));
                     this.state.testmode = false;
+                    this.state.testscale = 0;
                     this.state.playmode = true;
                     this.state.playpause = false;
                     this.state.lat = 30.5928;
@@ -362,9 +363,11 @@ class MapChart extends Map {
                           document.getElementsByClassName("play")[0].style.display = "inline";
                           document.getElementsByClassName("leftTime")[0].style.display = "inline";
                           document.getElementsByClassName("midTime")[0].style.display = "none";
-                          this.state.playmode = false;
-                          this.state.testscale = 0;
-                          this.setState({});
+                          this.setState({
+                              playmode: false,
+                              testscale: 0,
+                              testmode: false
+                          });
                         }
                       }
                     }, 500);
@@ -434,12 +437,12 @@ class MapChart extends Map {
           <thead>
             <tr>
                 <td className={"p-1 valign-top text-muted"}></td>
-                <td><b>Country</b></td>
+                <td className={"p-1 bg-danger text-light"} align={"center"}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></td>
+                <td className={"p-1"}><b>Country</b></td>
                 <td></td>
-                <td className={"p-1"} align={"center"}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></td>
-                <td className={"p-1 bg-danger text-light"} align={"center"}><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></td>
-                <td className={"p-1 bg-success text-light"} align={"center"}><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></td>
-                <td className={"p-1 bg-dark text-light"} align={"center"}><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></td>
+                <td className={"p-1 text-danger"} align={"center"}><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></td>
+                <td className={"p-1 text-success"} align={"center"}><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></td>
+                <td className={"p-1 text-dark"} align={"center"}><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></td>
             </tr>
           </thead>
           <tbody>
@@ -475,7 +478,8 @@ class MapChart extends Map {
                           })
                       }}>
                       <td className={"p-1 valign-top text-muted"}>{locationIndex + 1}</td>
-                      <td>{name}</td>
+                      <td className={"p-1 stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
+                      <td className={"p-1"}>{name}</td>
                       <td className={"p-1 stat"}>
                         <LightTooltip
                           title={
@@ -494,10 +498,9 @@ class MapChart extends Map {
                           </div>
                         </LightTooltip>
                       </td>
-                      <td className={"p-1 stat"} align={"right"}>{Utils.rounded(active)}</td>
-                      <td className={"p-1 stat bg-danger text-light"} align={"right"}>{Utils.rounded(confirmed)}</td>
-                      <td className={"p-1 stat bg-success text-light"} align={"right"}>{Utils.rounded(recovered)}</td>
-                      <td className={"p-1 stat bg-dark text-light"} align={"right"}>{Utils.rounded(deceased)}</td>
+                      <td className={"p-1 stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
+                      <td className={"p-1 stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
+                      <td className={"p-1 stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
                     </tr>
                   )
                 }
@@ -691,7 +694,7 @@ class MapChart extends Map {
         <div>
           <div>
               <b>{name}</b><br />
-              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])} &middot; <FontAwesomeIcon icon={faBiohazard}/> <span>{Utils.rounded(confirmed)}</span> &middot; <FontAwesomeIcon icon={faBolt}/> {Utils.rounded(1000000*confirmed/Population.ABSOLUTE[name])} ppm
+              <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])} &middot; <span className={"text-danger"}><FontAwesomeIcon icon={faBiohazard}/> <span>{Utils.rounded(confirmed)}</span></span> &middot; <FontAwesomeIcon icon={faBolt}/> {Utils.rounded(1000000*confirmed/Population.ABSOLUTE[name])} ppm
           </div>
           <div>
             <Badge variant={"danger"}><FontAwesomeIcon icon={faProcedures}/> {Utils.rounded(active)} active</Badge>
