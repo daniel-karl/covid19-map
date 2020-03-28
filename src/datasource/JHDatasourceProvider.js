@@ -187,9 +187,6 @@ export class JHDatasourceProvider extends DatasourceProvider {
         ds.datasets.map((dataset, dateIndex) => {
             Object.keys(dataset.data).map((name, nameIndex) => {
                 let locationData = dataset.data[name];
-                if(locationData.absolute.current.confirmed === 0) {
-                    return;
-                }
                 if(dateIndex < ds.datasets.length - 1) {
                     let g1 = 0.5 * locationData.absolute.growthLast1Day.confirmed / locationData.absolute.current.confirmed;
                     let g3 = 0.3 * locationData.absolute.growthLast3Days.confirmed / locationData.absolute.current.confirmed;
@@ -220,6 +217,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
                     }
                 } else {
                     // take score from yesterday
+                    if(locationData.absolute.growthLast1Day.confirmed === -1) {
+                        return;
+                    }
                     locationData.containmentScore = ds.datasets[ds.datasets.length - 2].data[name].containmentScore;
                 }
             });
