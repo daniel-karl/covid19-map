@@ -39,6 +39,7 @@ import * as Testing from "./TestingRates";
 import Utils from "./Utils";
 
 import { withStyles } from '@material-ui/core/styles';
+import RaceChart from "./RaceChart";
 
 const LightTooltip = withStyles(theme => ({
   tooltip: {
@@ -349,10 +350,7 @@ class MapChart extends Map {
                       testmode: false,
                       testscale: 0,
                       playmode: true,
-                      playpause: false,
-                      lat: 30.5928,
-                      lng: 114.3055,
-                      zoom: 3.01
+                      playpause: false
                     });
                     let interval = setInterval(() => {
                       if (!that.state.playmode) {
@@ -411,13 +409,18 @@ class MapChart extends Map {
                     document.getElementsByClassName("midTime")[0].style.display = "none";
                     this.state.playmode = false;
                     this.state.testscale = 0;
-                    this.state.lng = 0;
-                    this.state.lat = 0;
-                    this.state.zoom = 1.99;
                     this.render();
                   }}
               ><FontAwesomeIcon icon={faStopCircle}/> Stop
               </button>
+              <div className={"race mt-2"}>
+                <RaceChart
+                  datasource={this.state.datasource}
+                  dayOffset={this.state.dayOffset}
+                  logmode={this.state.logmode}
+                  names={["US", "Italy", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Netherlands"]}
+                />
+              </div>
             </div>
             {
               that.state.momentum !== "none" &&

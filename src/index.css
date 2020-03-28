@@ -434,3 +434,101 @@ g.deceasedBar {
 .centered {
   text-align: center;
 }
+
+.race {
+  padding: 5px;
+  padding-bottom: 0px;
+}
+
+.line {
+  fill: none;
+}
+
+.line0 {
+  stroke: #a6cee3;
+}
+
+.line1 {
+  stroke: #1f78b4;
+}
+
+.line2 {
+  stroke: #b2df8a;
+}
+
+.line3 {
+  stroke: #33a02c
+}
+
+.line4 {
+  stroke: #fb9a99;
+}
+
+.line5 {
+  stroke: #e31a1c;
+}
+
+.line6 {
+  stroke: #fdbf6f;
+}
+
+.line7 {
+  stroke: #ff7f00;
+}
+
+.line8 {
+  stroke: #cab2d6;
+}
+
+.line9 {
+  stroke: #6a3d9a;
+}
+
+.legend {
+  font-size: 10px;
+  stroke: none;
+}
+
+.legend0 {
+  fill: #a6cee3;
+}
+
+.legend1 {
+  fill: #1f78b4;
+}
+
+.legend2 {
+  fill: #b2df8a;
+}
+
+.legend3 {
+  fill: #33a02c
+}
+
+.legend4 {
+  fill: #fb9a99;
+}
+
+.legend5 {
+  fill: #e31a1c;
+}
+
+.legend6 {
+  fill: #fdbf6f;
+}
+
+.legend7 {
+  fill: #ff7f00;
+}
+
+.legend8 {
+  fill: #cab2d6;
+}
+
+.legend9 {
+  fill: #6a3d9a;
+}
+
+g.todayMarkerLineChart {
+  fill: #333333ee;
+}
