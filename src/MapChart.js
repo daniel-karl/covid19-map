@@ -242,15 +242,17 @@ class MapChart extends Map {
                     </Tooltip>,
                     <br/>,
                     <ReactBootstrapSlider
-                        ticks={[0, 1, 2, 3]}
-                        ticks_labels={["off", "global avg.", "x2", "x3"]}
-                        value={this.state.testscale}
-                        change={e => {
-                          this.setState({testscale: e.target.value, testmode: true});
-                        }}
-                        step={0.1}
-                        max={3}
-                        min={0}
+                      ticks={[0, 1, 2, 3]}
+                      ticks_labels={["off", "global avg.", "x2", "x3"]}
+                      value={this.state.testscale}
+                      change={e => {
+                        this.state.testscale = e.target.value;
+                        this.state.testmode = true;
+                        this.render();
+                      }}
+                      step={0.1}
+                      max={3}
+                      min={0}
                     ></ReactBootstrapSlider>,
                     <br/>
                   ]
@@ -1044,11 +1046,8 @@ class MapChart extends Map {
       return value;
     }
     if(value > 0) {
-        value = Math.log(value * 10000) / 100;
-        if(value < 0.00015) {
-            value = 0.00015;
-        }
-        return value;;
+        value = Math.log(value * this.state.datasource.maxValue) / Math.log(this.state.datasource.maxValue) / 20;
+        return value;
     }
     return 0;
   };

@@ -416,18 +416,18 @@ g.todayMarker {
 }
 
 g.confirmedProjectedBar {
-  fill: #0000FFcc;
+  fill: #0000FF;
 }
 
 g.confirmedBar {
-  fill: #FF0000cc;
+  fill: #FF000099;
 }
 
 g.recoveredBar {
-  fill: #00FF00cc;
+  fill: #00FF0099;
 }
 
-g.deceased {
+g.deceasedBar {
   fill: #000000cc;
 }
 
