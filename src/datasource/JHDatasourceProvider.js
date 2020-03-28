@@ -8,7 +8,7 @@ import * as Testing from "../TestingRates";
 
 export class JHDatasourceProvider extends DatasourceProvider {
 
-    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "Australia", "China", ""];
+    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "", "China", "Australia"];
 
     constructor() {
         super("Johns Hopkins CSSE COVID-19");
@@ -17,7 +17,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
         this.historyDeceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
 
         this.liveCountriesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv";
-        this.liveStatesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
+        this.liveUSStatesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
     }
 
     getDatasource = (callback) => {
@@ -27,12 +27,12 @@ export class JHDatasourceProvider extends DatasourceProvider {
             this.loadFromUrl(this.historyRecoveredUrl, (rawRecovered) => {
                 this.loadFromUrl(this.historyDeceasedUrl, (rawDeceased) => {
                     this.loadFromUrl(this.liveCountriesUrl, (rawCountries) => {
-                        this.loadFromUrl(this.liveStatesUrl, (rawStates) => {
+                        this.loadFromUrl(this.liveUSStatesUrl, (rawUSStates) => {
                             // load history
                             this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
                             // load live stats
                             this.parseLiveCountries(ds, rawCountries.data);
-                            // this.parseLiveStates(ds, rawStates.data);
+                            this.parseLiveUSStates(ds, rawUSStates.data);
                             this.fillEmpty(ds);
                             // infer data
                             this.computeActive(ds);
@@ -50,11 +50,11 @@ export class JHDatasourceProvider extends DatasourceProvider {
         });
     };
 
-    parseLiveCountries(ds, tableStates) {
+    parseLiveCountries(ds, tableCountries) {
         ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
         let dataset = ds.datasets[ds.datasets.length - 1].data;
         let header = true;
-        for(let row of tableStates) {
+        for(let row of tableCountries) {
             if(header) {
                 header = false;
                 continue;
@@ -84,6 +84,44 @@ export class JHDatasourceProvider extends DatasourceProvider {
             data.ppm.growthLast1Day.confirmed = data.ppm.current.confirmed - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.confirmed;
             data.ppm.growthLast1Day.recovered = data.ppm.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.recovered;
             data.ppm.growthLast1Day.deceased = data.ppm.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.deceased;
+
+            dataset[name] = data;
+        }
+    }
+
+    parseLiveUSStates(ds, tableUSStates) {
+        let dataset = ds.datasets[ds.datasets.length - 1].data;
+        let header = true;
+        for(let row of tableUSStates) {
+            if(header) {
+                header = false;
+                continue;
+            }
+            if(row.length < 3) {
+                continue
+            }
+            let name = (row[1] ? row[1] + ", " + row[2] : row[2]) ? (row[1] ? row[1] + ", " + row[2] : row[2]) : "";
+            if(this.BLACKLIST_NAMES.includes(name)) {
+                continue;
+            }
+            ds.locations[name] = [row[5], row[4]];
+
+            let data = new Data();
+            data.absolute.current.confirmed = Number(row[6]);
+            data.absolute.current.recovered= Number(row[8]);
+            data.absolute.current.deceased = Number(row[7]);
+
+            data.absolute.growthLast1Day.confirmed = 0;
+            data.absolute.growthLast1Day.recovered = 0;
+            data.absolute.growthLast1Day.deceased = 0;
+
+            data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
+            data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
+            data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
+
+            data.ppm.growthLast1Day.confirmed = 0;
+            data.ppm.growthLast1Day.recovered = 0;
+            data.ppm.growthLast1Day.deceased = 0;
 
             dataset[name] = data;
         }
@@ -119,23 +157,6 @@ export class JHDatasourceProvider extends DatasourceProvider {
         });
     };
 
-    parseLiveStates = (ds, tableStates) => {
-        let dataset = ds.datasets[ds.datasets.length - 1];
-        let header = true;
-        for(let row of tableStates) {
-            if(header) {
-                header = false
-                continue;
-            }
-            let data = new Data();
-            data.absolute.current.confirmed = row[6];
-            data.absolute.current.deceased = row[8];
-            data.absolute.current.recovered= row[7];
-            dataset[row[1] + ", " + row[2]] = data;
-            console.log(row);
-        }
-    }
-
     parseHistory = (ds, tableConfirmed, tableRecovered, tableDeceased) => {
         this.parseTable(ds, "confirmed", tableConfirmed, true);
         this.parseTable(ds, "recovered", tableRecovered, false);
@@ -144,15 +165,18 @@ export class JHDatasourceProvider extends DatasourceProvider {
 
     computeTotals = (ds) => {
         ds.datasets.map((dataset, datasetIndex) => {
-            Object.values(dataset.data).map((locationData, locationIndex) => {
+            Object.keys(dataset.data).map((name, nameIndex) => {
+                let locationData = dataset.data[name];
 
                 // sums
-                dataset.totalConfirmed += locationData.absolute.current.confirmed;
-                dataset.totalRecovered += locationData.absolute.current.recovered;
-                dataset.totalDeceased += locationData.absolute.current.deceased;
-                dataset.totalActive += locationData.absolute.current.active;
-                dataset.totalConfirmedProjected += Math.max(locationData.absolute.current.confirmed,
-                    locationData.absolute.current.confirmedProjected);
+                if(!name.endsWith(", US")) {
+                    dataset.totalConfirmed += locationData.absolute.current.confirmed;
+                    dataset.totalRecovered += locationData.absolute.current.recovered;
+                    dataset.totalDeceased += locationData.absolute.current.deceased;
+                    dataset.totalActive += locationData.absolute.current.active;
+                    dataset.totalConfirmedProjected += Math.max(locationData.absolute.current.confirmed,
+                        locationData.absolute.current.confirmedProjected);
+                }
 
                 // track max
                 ds.maxValue = Math.max(ds.maxValue, locationData.absolute.current.confirmed);
