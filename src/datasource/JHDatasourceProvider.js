@@ -8,7 +8,7 @@ import * as Testing from "../TestingRates";
 
 export class JHDatasourceProvider extends DatasourceProvider {
 
-    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "", "China", "Australia"];
+    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "", "China", "Australia", "Recovered, US"];
 
     constructor() {
         super("Johns Hopkins CSSE COVID-19");
@@ -39,8 +39,6 @@ export class JHDatasourceProvider extends DatasourceProvider {
                             this.computeConfirmedProjected(ds);
                             this.computeContainmentScore(ds);
                             this.computeTotals(ds);
-
-                            console.log(ds);
 
                             callback(ds);
                         });

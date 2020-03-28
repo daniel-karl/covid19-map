@@ -5,6 +5,11 @@
 // Australia: from https://en.wikipedia.org/wiki/States_and_territories_of_Australia
 // Diamond Princess: https://www.nytimes.com/2020/03/08/world/asia/coronavirus-cruise-ship.html
 export const ABSOLUTE = {
+  "American Samoa, US": 55641,
+  "Northern Mariana Islands, US": 55144,
+  "Anguilla, United Kingdom": 15094,
+  "British Virgin Islands, United Kingdom": 31196,
+  "Turks and Caicos Islands, United Kingdom": 53700,
   "Alabama, US": 4903185,
   "Alaska, US": 731545,
   "Arizona, US": 7278717,
@@ -582,20 +587,22 @@ export const ABSOLUTE = {
 	"Tasmania, Australia": 534281,
 	"Victoria, Australia": 6594804,
 	"Western Australia, Australia": 2621680,
-  "Alberta, Canada": 4335768,
-  "British Columbia, Canada": 5031893,
-  "New Brunswick, Canada": 772790,
-  "Northwest Territories, Canada": 45047,
-  "Nova Scotia, Canada": 965249,
-  "Ontario, Canada": 14441694,
-  "Quebec, Canada": 8429241,
-  "Saskatchewan, Canada": 1170028,
-  "Newfoundland and Labrador, Canada": 521542,
-  "Manitoba, Canada": 1361997,
+    "Alberta, Canada": 4335768,
+    "British Columbia, Canada": 5031893,
+    "New Brunswick, Canada": 772790,
+    "Northwest Territories, Canada": 45047,
+    "Nova Scotia, Canada": 965249,
+    "Ontario, Canada": 14441694,
+    "Quebec, Canada": 8429241,
+    "Saskatchewan, Canada": 1170028,
+    "Newfoundland and Labrador, Canada": 521542,
+    "Manitoba, Canada": 1361997,
     "Yukon, Canada": 35874,
 
-  "Diamond Princess, Cruise Ship": 3700,
-  "Diamond Princess, Canada": 3700,
-  "Diamond Princess": 3700,
-  "Grand Princess, Canada": 3100
+    "Diamond Princess, Cruise Ship": 2670,
+    "Diamond Princess, Canada": 2670,
+    "Diamond Princess, US": 2670,
+    "Diamond Princess": 2670,
+    "Grand Princess, Canada": 3100,
+    "Grand Princess, US": 3100
 };
