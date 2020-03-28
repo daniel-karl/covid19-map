@@ -410,3 +410,23 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
+
+g.todayMarker {
+  fill: #ccc;
+}
+
+g.confirmedProjectedBar {
+  fill: #0000FFcc;
+}
+
+g.confirmedBar {
+  fill: #FF0000cc;
+}
+
+g.recoveredBar {
+  fill: #00FF00cc;
+}
+
+g.deceased {
+  fill: #000000cc;
+}
