@@ -217,7 +217,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
                     }
                 } else {
                     // take score from yesterday
-                    if(locationData.absolute.growthLast1Day.confirmed === -1) {
+                    if(ds.datasets[ds.datasets.length - 2].data[name].absolute.current.confirmed === -1) {
                         return;
                     }
                     locationData.containmentScore = ds.datasets[ds.datasets.length - 2].data[name].containmentScore;
