@@ -32,6 +32,7 @@ import Form from 'react-bootstrap/Form';
 import Badge from 'react-bootstrap/Badge';
 import ReactBootstrapSlider from "react-bootstrap-slider";
 
+import BarChart from "./BarChart";
 import {JHDatasourceProvider} from "./datasource/JHDatasourceProvider";
 import * as Population from "./Population";
 import * as Testing from "./TestingRates";
@@ -892,55 +893,13 @@ class MapChart extends Map {
               </tbody>
             </table>
           </div>
-          <svg width="272" heigth="145" role="img">
-            {
-              Object.values(this.state.datasource.datasets).map((dataset, dateIndex) => {
-                let svgWidth = 272;
-                let svgHeight = 145;
-                let barWidth = svgWidth / (this.state.datasource.datasets.length);
-                let max = this.state.datasource.maxValue;
-                let confirmedProjectedBarHeight;
-                let confirmedBarHeight;
-                let recoveredBarHeight;
-                let deceasedBarHeight;
-                if(this.state.logmode) {
-                    // confirmedProjectedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.confirmedProjected * this.state.testscale) / Math.log(max)) * svgHeight);
-                    confirmedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.confirmed) / Math.log(max)) * svgHeight);
-                    recoveredBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.recovered) / Math.log(max)) * svgHeight);
-                    deceasedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.deceased) / Math.log(max)) * svgHeight);
-                } else {
-                    // confirmedProjectedBarHeight = Math.round((dataset.data[name].absolute.current.confirmedProjected * this.state.testscale / max) * svgHeight);
-                    confirmedBarHeight = Math.round((dataset.data[name].absolute.current.confirmed / max) * svgHeight);
-                    recoveredBarHeight = Math.round((dataset.data[name].absolute.current.recovered / max) * svgHeight);
-                    deceasedBarHeight = Math.round((dataset.data[name].absolute.current.deceased / max) * svgHeight);
-                }
-                return(
-                  <g>
-                    {
-                      this.state.dayOffset === dateIndex - this.state.datasource.datasets.length + 1 &&
-                      <g className="todayMarker">
-                        <rect x={String(dateIndex * barWidth)} y={0} width={barWidth} height={svgHeight}></rect>
-                      </g>
-                    }
-                    {
-                      /*<g className="confirmedProjectedBar">
-                        <rect x={String(dateIndex * barWidth)} y={svgHeight - confirmedProjectedBarHeight} width={barWidth} height={confirmedProjectedBarHeight}></rect>
-                      </g>*/
-                    }
-                    <g className="confirmedBar">
-                     <rect x={String(dateIndex * barWidth)} y={svgHeight - confirmedBarHeight} width={barWidth} height={confirmedBarHeight}></rect>
-                    </g>
-                    <g className="recoveredBar">
-                      <rect x={String(dateIndex * barWidth)} y={svgHeight - recoveredBarHeight} width={barWidth} height={recoveredBarHeight}></rect>
-                    </g>
-                    <g className="deceasedBar">
-                      <rect x={String(dateIndex * barWidth)} y={svgHeight - deceasedBarHeight} width={barWidth} height={deceasedBarHeight}></rect>
-                    </g>
-                  </g>
-                );
-              })
-            }
-          </svg><br />
+          <BarChart
+            datasource={this.state.datasource}
+            name={name}
+            logmode={this.state.logmode}
+            dayOffset={this.state.dayOffset}
+          />
+          <br />
           <div className={"text-center"}>
               Plot shows data scaled <b>{this.state.logmode ? "logarithmically" : "linearly "}</b>  over time.<br /><i>It is currently insensitive to population size.</i>
           </div>
@@ -1085,7 +1044,11 @@ class MapChart extends Map {
       return value;
     }
     if(value > 0) {
-      return Math.log(value * 10000) / 100;
+        value = Math.log(value * 10000) / 100;
+        if(value < 0.00015) {
+            value = 0.00015;
+        }
+        return value;;
     }
     return 0;
   };
