@@ -904,12 +904,12 @@ class MapChart extends Map {
                 let recoveredBarHeight;
                 let deceasedBarHeight;
                 if(this.state.logmode) {
-                    confirmedProjectedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.confirmedProjected * this.state.testscale) / Math.log(max)) * svgHeight);
+                    // confirmedProjectedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.confirmedProjected * this.state.testscale) / Math.log(max)) * svgHeight);
                     confirmedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.confirmed) / Math.log(max)) * svgHeight);
                     recoveredBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.recovered) / Math.log(max)) * svgHeight);
                     deceasedBarHeight = Math.round((Math.log(dataset.data[name].absolute.current.deceased) / Math.log(max)) * svgHeight);
                 } else {
-                    confirmedProjectedBarHeight = Math.round((dataset.data[name].absolute.current.confirmedProjected * this.state.testscale / max) * svgHeight);
+                    // confirmedProjectedBarHeight = Math.round((dataset.data[name].absolute.current.confirmedProjected * this.state.testscale / max) * svgHeight);
                     confirmedBarHeight = Math.round((dataset.data[name].absolute.current.confirmed / max) * svgHeight);
                     recoveredBarHeight = Math.round((dataset.data[name].absolute.current.recovered / max) * svgHeight);
                     deceasedBarHeight = Math.round((dataset.data[name].absolute.current.deceased / max) * svgHeight);
@@ -922,9 +922,11 @@ class MapChart extends Map {
                         <rect x={String(dateIndex * barWidth)} y={0} width={barWidth} height={svgHeight}></rect>
                       </g>
                     }
-                    <g className="confirmedProjectedBar">
-                     <rect x={String(dateIndex * barWidth)} y={svgHeight - confirmedProjectedBarHeight} width={barWidth} height={confirmedProjectedBarHeight}></rect>
-                    </g>
+                    {
+                      /*<g className="confirmedProjectedBar">
+                        <rect x={String(dateIndex * barWidth)} y={svgHeight - confirmedProjectedBarHeight} width={barWidth} height={confirmedProjectedBarHeight}></rect>
+                      </g>*/
+                    }
                     <g className="confirmedBar">
                      <rect x={String(dateIndex * barWidth)} y={svgHeight - confirmedBarHeight} width={barWidth} height={confirmedBarHeight}></rect>
                     </g>
@@ -939,8 +941,8 @@ class MapChart extends Map {
               })
             }
           </svg><br />
-          <div>
-              Plot shows data scaled <b>{this.state.logmode ? "logarithmically" : "linearly "}</b>  over time
+          <div className={"text-center"}>
+              Plot shows data scaled <b>{this.state.logmode ? "logarithmically" : "linearly "}</b>  over time.<br /><i>It is currently insensitive to population size.</i>
           </div>
         </div>
       )

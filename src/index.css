@@ -430,3 +430,7 @@ g.recoveredBar {
 g.deceased {
   fill: #000000cc;
 }
+
+.centered {
+  text-align: center;
+}
