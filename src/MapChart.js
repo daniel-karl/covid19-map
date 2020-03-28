@@ -22,7 +22,8 @@ import {
   faVial,
   faStepBackward,
   faStepForward,
-  faShieldAlt
+  faShieldAlt,
+  faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
@@ -879,12 +880,15 @@ class MapChart extends Map {
                 </tr>
                 <tr>
                   <td></td>
-                  <td><b>Continue to follow the advice of the WHO<br/>and your local administration.</b></td>
+                  <td><FontAwesomeIcon icon={faExclamationTriangle}/> <b>Continue to follow the advice of the WHO<br/>and your local administration.</b></td>
                 </tr>
-                <tr>
-                  <td></td>
-                  <td>ppm: confirmed cases per one million people</td>
-                </tr>
+                {
+                  this.state.ppmmode &&
+                  <tr>
+                    <td></td>
+                    <td><span className="text-muted">ppm: confirmed cases per one million people</span></td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
