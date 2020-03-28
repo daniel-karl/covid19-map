@@ -293,8 +293,16 @@ class MapChart extends Map {
             </div>
             <div className="small timeline">
               <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}>
-                <b>{ds.date}</b></button>
-              <br/>
+                <b>{ds.date}</b>
+              </button>
+              <div className={"race mb-1"}>
+                <RaceChart
+                  datasource={this.state.datasource}
+                  dayOffset={this.state.dayOffset}
+                  logmode={this.state.logmode}
+                  names={["US", "Italy", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Netherlands"]}
+                />
+              </div>
               <button
                   className={this.state.dayOffset < 0 ? "btn btn-sm btn-dark leftTime" : "btn btn-sm btn-outline-dark leftTime"}
                   style={{height: "30px", lineHeight: "20px"}}
@@ -331,7 +339,7 @@ class MapChart extends Map {
                       dayOffset: 0
                     });
                   }}
-              >Today</button>
+              >Latest</button>
 
               <button
                   className={"btn btn-sm btn-success play"}
@@ -413,14 +421,6 @@ class MapChart extends Map {
                   }}
               ><FontAwesomeIcon icon={faStopCircle}/> Stop
               </button>
-              <div className={"race mt-2"}>
-                <RaceChart
-                  datasource={this.state.datasource}
-                  dayOffset={this.state.dayOffset}
-                  logmode={this.state.logmode}
-                  names={["US", "Italy", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Netherlands"]}
-                />
-              </div>
             </div>
             {
               that.state.momentum !== "none" &&

@@ -92,7 +92,7 @@ body {
   height: 24px;
   border-radius: 3px;
   padding: 0px;
-  z-index: 999;
+  z-index: 1001;
   box-shadow: 0px 0px 5px #999;
 }
 
@@ -433,11 +433,6 @@ g.deceasedBar {
 
 .centered {
   text-align: center;
-}
-
-.race {
-  padding: 5px;
-  padding-bottom: 0px;
 }
 
 .line {
