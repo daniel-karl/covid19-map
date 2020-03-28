@@ -72,6 +72,7 @@ class MapChart extends Map {
       selectedData: ["projected", "confirmed", "recovered", "deceased"],
       datasource: null,
       leadership: "active",
+      selectedLocations: ["Hubei, China", "Italy", "US", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Austria"],
 
       lat: 0,
       lng: 0,
@@ -300,7 +301,7 @@ class MapChart extends Map {
                   datasource={this.state.datasource}
                   dayOffset={this.state.dayOffset}
                   logmode={this.state.logmode}
-                  names={["US", "Italy", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Netherlands"]}
+                  names={this.state.selectedLocations}
                 />
               </div>
               <button
@@ -613,13 +614,18 @@ class MapChart extends Map {
                     containmentScore = "N/A";
                   }
                   return (
-                    <tr className="locationSelect" onClick={() =>{
-                          this.setState({
-                              lng: this.state.datasource.locations[name][0],
-                              lat: this.state.datasource.locations[name][1],
-                              zoom: 5 + Math.random() / 10
-                          })
-                      }}>
+                    <tr
+                        className="locationSelect"
+                        onClick={() =>{
+                            this.state.selectedLocations.pop();
+                            this.state.selectedLocations.push(name);
+                            this.setState({
+                                lng: this.state.datasource.locations[name][0],
+                                lat: this.state.datasource.locations[name][1],
+                                zoom: 5 + Math.random() / 10
+                            })
+                        }}
+                    >
                       <td className={"p-1 valign-top text-muted mono"} align={"center"}>{locationIndex + 1}</td>
                       <td className={"p-1 valign-top stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
                       <td className={"p-1 valign-top country"}>{name}</td>
@@ -796,6 +802,11 @@ class MapChart extends Map {
           radius={size && size > 0 ? Math.sqrt(size) * this.state.factor : 0}
           opacity={0}
           fillOpacity={opacity}
+          onClick={() => {
+              this.state.selectedLocations.pop();
+              this.state.selectedLocations.push(name);
+              this.setState({});
+          }}
         >
           <LTooltip direction="bottom" offset={[0, 20]} opacity={1}>
             {

@@ -476,7 +476,7 @@ g.deceasedBar {
 }
 
 .line9 {
-  stroke: #6a3d9a;
+  stroke: #000;
 }
 
 .legend {
@@ -521,7 +521,7 @@ g.deceasedBar {
 }
 
 .legend9 {
-  fill: #6a3d9a;
+  fill: #000;
 }
 
 g.todayMarkerLineChart {
@@ -529,6 +529,6 @@ g.todayMarkerLineChart {
 }
 
 
-div.leaflet-pane.leaflet-tooltip-pane {
-  z-index: 1000002 !important;
+div.leaflet-pane.leaflet-tooltip-pane * {
+  z-index: 1002 !important;
 }
