@@ -184,47 +184,43 @@ export class JHDatasourceProvider extends DatasourceProvider {
     };
 
     computeContainmentScore = (ds) => {
-        ds.datasets.map((dataset, datasetIndex) => {
-            Object.values(dataset.data).map((locationData, locationIndex) => {
+        ds.datasets.map((dataset, dateIndex) => {
+            Object.keys(dataset.data).map((name, nameIndex) => {
+                let locationData = dataset.data[name];
                 if(locationData.absolute.current.confirmed === 0) {
                     return;
                 }
-                let g1 = 0.5 * locationData.absolute.growthLast1Day.confirmed / locationData.absolute.current.confirmed;
-                let g3 = 0.3 * locationData.absolute.growthLast3Days.confirmed / locationData.absolute.current.confirmed;
-                let g7 = 0.2 * locationData.absolute.growthLast7Days.confirmed / locationData.absolute.current.confirmed;
-                let g = (g1 + g3 + g7);
-                if(g >= 1) {
-                    locationData.containmentScore = 0;
-                }
-                else if(g >= 0.5) {
-                    locationData.containmentScore = 1;
-                }
-                else if(g >= 0.2) {
-                    locationData.containmentScore = 2;
-                }
-                else if(g >= 0.1) {
-                    locationData.containmentScore = 3;
-                }
-                else if(g >= 0.05) {
-                    locationData.containmentScore = 4;
-                }
-                else if(g >= 0.02) {
-                    locationData.containmentScore = 5;
-                }
-                else if(g >= 0.01) {
-                    locationData.containmentScore = 6;
-                }
-                else if(g >= 0.005) {
-                    locationData.containmentScore = 7;
-                }
-                else if(g >= 0.002) {
-                    locationData.containmentScore = 8;
-                }
-                else if(g >= 0.001) {
-                    locationData.containmentScore = 9;
-                }
-                else if(g >= 0.0) {
-                    locationData.containmentScore = 10;
+                if(dateIndex < ds.datasets.length - 1) {
+                    let g1 = 0.5 * locationData.absolute.growthLast1Day.confirmed / locationData.absolute.current.confirmed;
+                    let g3 = 0.3 * locationData.absolute.growthLast3Days.confirmed / locationData.absolute.current.confirmed;
+                    let g7 = 0.2 * locationData.absolute.growthLast7Days.confirmed / locationData.absolute.current.confirmed;
+                    let g = (g1 + g3 + g7);
+                    if (g >= 1) {
+                        locationData.containmentScore = 0;
+                    } else if (g >= 0.5) {
+                        locationData.containmentScore = 1;
+                    } else if (g >= 0.2) {
+                        locationData.containmentScore = 2;
+                    } else if (g >= 0.1) {
+                        locationData.containmentScore = 3;
+                    } else if (g >= 0.05) {
+                        locationData.containmentScore = 4;
+                    } else if (g >= 0.02) {
+                        locationData.containmentScore = 5;
+                    } else if (g >= 0.01) {
+                        locationData.containmentScore = 6;
+                    } else if (g >= 0.005) {
+                        locationData.containmentScore = 7;
+                    } else if (g >= 0.002) {
+                        locationData.containmentScore = 8;
+                    } else if (g >= 0.001) {
+                        locationData.containmentScore = 9;
+                    } else if (g >= 0.0) {
+                        locationData.containmentScore = 10;
+                    }
+                } else {
+                    // take score from yesterday
+                    locationData.containmentScore = ds.datasets[ds.datasets.length - 2].data[name].containmentScore;
                 }
             });
         });
