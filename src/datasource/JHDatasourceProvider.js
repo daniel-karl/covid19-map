@@ -8,34 +8,138 @@ import * as Testing from "../TestingRates";
 
 export class JHDatasourceProvider extends DatasourceProvider {
 
+    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "Australia", "China", ""];
+
     constructor() {
         super("Johns Hopkins CSSE COVID-19");
-        this.confirmedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
-        this.recoveredUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
-        this.deceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+        this.historyConfirmedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+        this.historyRecoveredUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
+        this.historyDeceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+
+        this.liveCountriesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv";
+        this.liveStatesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
     }
 
     getDatasource = (callback) => {
         let ds = new Datasource();
         // load confirmed data
-        this.loadFromUrl(this.confirmedUrl, (rawConfirmed) => {
-            this.loadFromUrl(this.recoveredUrl, (rawRecovered) => {
-                this.loadFromUrl(this.deceasedUrl, (rawDeceased) => {
-                    this.parse(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
-                    callback(ds);
+        this.loadFromUrl(this.historyConfirmedUrl, (rawConfirmed) => {
+            this.loadFromUrl(this.historyRecoveredUrl, (rawRecovered) => {
+                this.loadFromUrl(this.historyDeceasedUrl, (rawDeceased) => {
+                    this.loadFromUrl(this.liveCountriesUrl, (rawCountries) => {
+                        this.loadFromUrl(this.liveStatesUrl, (rawStates) => {
+                            // load history
+                            this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
+                            // load live stats
+                            this.parseLiveCountries(ds, rawCountries.data);
+                            // this.parseLiveStates(ds, rawStates.data);
+                            this.fillEmpty(ds);
+                            // infer data
+                            this.computeActive(ds);
+                            this.computeConfirmedProjected(ds);
+                            this.computeContainmentScore(ds);
+                            this.computeTotals(ds);
+
+                            console.log(ds);
+
+                            callback(ds);
+                        });
+                    });
                 });
             })
         });
     };
 
-    parse = (ds, tableConfirmed, tableRecovered, tableDeceased) => {
+    parseLiveCountries(ds, tableStates) {
+        ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
+        let dataset = ds.datasets[ds.datasets.length - 1].data;
+        let header = true;
+        for(let row of tableStates) {
+            if(header) {
+                header = false;
+                continue;
+            }
+            if(row.length < 3) {
+                continue
+            }
+            let name = row[0];
+            if(this.BLACKLIST_NAMES.includes(name)) {
+                continue;
+            }
+            ds.locations[name] = [row[3], row[2]];
+
+            let data = new Data();
+            data.absolute.current.confirmed = Number(row[4]);
+            data.absolute.current.recovered= Number(row[6]);
+            data.absolute.current.deceased = Number(row[5]);
+
+            data.absolute.growthLast1Day.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.confirmed;
+            data.absolute.growthLast1Day.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.recovered;
+            data.absolute.growthLast1Day.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.deceased;
+
+            data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
+            data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
+            data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
+
+            data.ppm.growthLast1Day.confirmed = data.ppm.current.confirmed - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.confirmed;
+            data.ppm.growthLast1Day.recovered = data.ppm.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.recovered;
+            data.ppm.growthLast1Day.deceased = data.ppm.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.deceased;
+
+            dataset[name] = data;
+        }
+    }
+
+    fillEmpty = (ds) => {
+        ds.datasets.map((dataset, dateIndex) => {
+            Object.keys(ds.locations).map((name, nameIndex) => {
+                if(!(name in dataset.data)) {
+
+                    let lastData = ds.datasets[ds.datasets.length - 2].data[name];
+
+                    let data = new Data();
+                    data.absolute.current.confirmed = lastData ? lastData.absolute.current.confirmed : 0;
+                    data.absolute.current.recovered = lastData ? lastData.absolute.current.recovered : 0;
+                    data.absolute.current.deceased = lastData ? lastData.absolute.current.deceased : 0;
+
+                    data.absolute.growthLast1Day.confirmed = lastData ? lastData.absolute.growthLast1Day.confirmed : 0;
+                    data.absolute.growthLast1Day.recovered = lastData ? lastData.absolute.growthLast1Day.recovered : 0;
+                    data.absolute.growthLast1Day.deceased = lastData ? lastData.absolute.growthLast1Day.deceased : 0;
+
+                    data.absolute.growthLast3Days.confirmed = lastData ? lastData.absolute.growthLast3Days.confirmed : 0;
+                    data.absolute.growthLast3Days.recovered = lastData ? lastData.absolute.growthLast3Days.recovered : 0;
+                    data.absolute.growthLast3Days.deceased = lastData ? lastData.absolute.growthLast3Days.deceased : 0;
+
+                    data.absolute.growthLast7Days.confirmed = lastData ? lastData.absolute.growthLast7Days.confirmed : 0;
+                    data.absolute.growthLast7Days.recovered = lastData ? lastData.absolute.growthLast7Days.recovered : 0;
+                    data.absolute.growthLast7Days.deceased = lastData ? lastData.absolute.growthLast7Days.deceased : 0;
+
+                    dataset.data[name] = data;
+                }
+            });
+        });
+    };
+
+    parseLiveStates = (ds, tableStates) => {
+        let dataset = ds.datasets[ds.datasets.length - 1];
+        let header = true;
+        for(let row of tableStates) {
+            if(header) {
+                header = false
+                continue;
+            }
+            let data = new Data();
+            data.absolute.current.confirmed = row[6];
+            data.absolute.current.deceased = row[8];
+            data.absolute.current.recovered= row[7];
+            dataset[row[1] + ", " + row[2]] = data;
+            console.log(row);
+        }
+    }
+
+    parseHistory = (ds, tableConfirmed, tableRecovered, tableDeceased) => {
         this.parseTable(ds, "confirmed", tableConfirmed, true);
         this.parseTable(ds, "recovered", tableRecovered, false);
         this.parseTable(ds, "deceased", tableDeceased, false);
-        this.computeActive(ds);
-        this.computeConfirmedProjected(ds);
-        this.computeContainmentScore(ds);
-        this.computeTotals(ds);
     };
 
     computeTotals = (ds) => {
@@ -190,6 +294,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
 
     parseRow = (ds, attribute, row) => {
         let name = (row[0] ? row[0] + ", " + row[1] : row[1]) ? (row[0] ? row[0] + ", " + row[1] : row[1]) : "";
+        if(this.BLACKLIST_NAMES.includes(name)) {
+            return;
+        }
         ds.locations[name] = [row[3], row[2]];
         for(let i = 4; i < row.length; i++) {
             let data = ds.datasets[i - 4].data;
@@ -236,6 +343,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
     };
 
     ppm = (name, value) => {
+        if(!Population.ABSOLUTE[name]) {
+            console.log("No population data for: " + name);
+        }
         return 1000000 * value / Population.ABSOLUTE[name];
     };
 

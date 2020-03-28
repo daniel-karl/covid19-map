@@ -157,7 +157,7 @@ class MapChart extends Map {
               <div hidden={that.state.minimized}>
                 <span className="small text-muted mr-2">Mode:</span>
                 <Tooltip
-                    title={<span><b>Standard mode:</b> Glyphs show confirmed, recovered and deceased numbers (updated daily).<br/><br/><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
+                    title={<span><b>Live mode:</b> Glyphs show latest confirmed, recovered and deceased numbers.<br/><br/><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
                     small={"true"}
                     arrow
                     disableTouchListener={true}
@@ -169,7 +169,7 @@ class MapChart extends Map {
                               as="select" onChange={(e) => {
                   that.setState({momentum: e.nativeEvent.target.value, chart: "pie", testmode: false, testscale: 0});
                 }}>
-                  <option value="none">Standard</option>
+                  <option value="none">Live</option>
                   <option value="last1">Momentum (last 24 hours)</option>
                   <option value="last3">Momentum (last 3 days)</option>
                   <option value="last7">Momentum (last 7 days)</option>

@@ -114,6 +114,8 @@ export const ABSOLUTE = {
   "Brunei": 437483,
   "Bulgaria": 6948445,
   "Burkina Faso": 20903278,
+  "Burma": 53570000,
+  "MS Zaandam": 1432,
   "Burundi": 11890781,
   "Cabo Verde": 555988,
   "Cambodia": 16718971.000000002,
