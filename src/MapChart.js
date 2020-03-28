@@ -440,64 +440,131 @@ class MapChart extends Map {
         <table>
           <thead>
             <tr>
-                <td className={"p-1 valign-top text-muted"}></td>
-                <td className={"p-1 bg-danger text-light sortHeader"} align={"center"}><a
-                  onClick={() => {
-                    this.setState({
-                      leadership: "active"
-                    });
-                  }}><FontAwesomeIcon icon={faProcedures} size={"lg"}/></a></td>
-                <td className={"p-1 sortHeader"}><a
-                  onClick={() => {
-                    this.setState({
-                      leadership: "name"
-                    });
-                  }}
-	            >Country</a></td>
-                <td className={"p-1 sortHeader"} align={"center"}>
-                    <LightTooltip
-                      title={
-                        <div style={{textAlign: "justify"}}>
-                          <b>Containment Score</b> reflects the spread of COVID19
-                          in this region, based on weighted average growth
-                          of confirmed cases over the past 1, 3 and 7 days. From worst (0/10) to best (10/10).
-                        </div>
-                      }
-                      small={"true"}
-                      disableTouchListener={true}
-                    >
-                        <a
+              <td className={"p-1 valign-top text-muted"}></td>
+              <td className={"p-1 bg-danger text-light sortHeader"} align={"center"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>active cases</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
                     onClick={() => {
                       this.setState({
-                        leadership: "containmentScore"
+                        leadership: "active"
+                      });
+                    }}><FontAwesomeIcon icon={faProcedures} size={"lg"}/>
+                  </a>
+                </LightTooltip>
+              </td>
+              <td className={"p-1 sortHeader"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>location</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "name"
+                      });
+                    }}
+                  >Location</a>
+                </LightTooltip>
+              </td>
+              <td className={"p-1 sortHeader"} align={"center"}>
+              <LightTooltip
+                title={
+                  <div style={{textAlign: "justify"}}>
+                    <b>Containment Score</b> reflects the spread of COVID19
+                    in this region, based on weighted average growth
+                    of confirmed cases over the past 1, 3 and 7 days. From worst (0/10) to best (10/10).
+                  </div>
+                }
+                small={"true"}
+                disableTouchListener={true}
+              >
+                <a
+                  onClick={() => {
+                    this.setState({
+                      leadership: "containmentScore"
+                    });
+                  }}
+                >
+                  <FontAwesomeIcon icon={faShieldAlt} size={"lg"}/>
+                </a>
+              </LightTooltip>
+              </td>
+              <td className={"p-1 text-danger sortHeader"} align={"center"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>confirmed cases</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "confirmed"
                       });
                     }}
                   >
-                      <FontAwesomeIcon icon={faShieldAlt} size={"lg"}/>
-                      </a>
-                    </LightTooltip>
-                </td>
-                <td className={"p-1 text-danger sortHeader"} align={"center"}><a
-                  onClick={() => {
-                    this.setState({
-                      leadership: "confirmed"
-                    });
-                  }}
-	            ><FontAwesomeIcon icon={faBiohazard} size={"lg"}/></a></td>
-                <td className={"p-1 text-success sortHeader"} align={"center"}><a
-                  onClick={() => {
-                    this.setState({
-                      leadership: "recovered"
-                    });
-                  }}
-	            ><FontAwesomeIcon icon={faHeartbeat} size={"lg"}/></a></td>
-                <td className={"p-1 text-dark sortHeader"} align={"center"}><a
-                  onClick={() => {
-                    this.setState({
-                      leadership: "deceased"
-                    });
-                  }}
-	            ><FontAwesomeIcon icon={faHeartBroken} size={"lg"}/></a></td>
+                    <FontAwesomeIcon icon={faBiohazard} size={"lg"}/>
+                  </a>
+                </LightTooltip>
+              </td>
+              <td className={"p-1 text-success sortHeader"} align={"center"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>recovered cases</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "recovered"
+                      });
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faHeartbeat} size={"lg"}/>
+                  </a>
+                </LightTooltip>
+              </td>
+              <td className={"p-1 text-dark sortHeader"} align={"center"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>deceased cases</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "deceased"
+                      });
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faHeartBroken} size={"lg"}/>
+                  </a>
+                </LightTooltip>
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -546,17 +613,17 @@ class MapChart extends Map {
                               zoom: 5 + Math.random() / 10
                           })
                       }}>
-                      <td className={"p-1 valign-top text-muted"}>{locationIndex + 1}</td>
-                      <td className={"p-1 stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
-                      <td className={"p-1"}>{name}</td>
-                      <td className={"p-1 stat"}>
+                      <td className={"p-1 valign-top text-muted mono"} align={"center"}>{locationIndex + 1}</td>
+                      <td className={"p-1 valign-top stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
+                      <td className={"p-1 valign-top country"}>{name}</td>
+                      <td className={"p-1 valign-top"}>
                         <div className={"containmentScore containmentScore" + containmentScore}>
                           {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
                         </div>
                       </td>
-                      <td className={"p-1 stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
-                      <td className={"p-1 stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
-                      <td className={"p-1 stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
+                      <td className={"p-1 valign-top stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
+                      <td className={"p-1 valign-top stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
+                      <td className={"p-1 valign-top stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
                     </tr>
                   )
                 }

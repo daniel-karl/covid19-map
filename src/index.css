@@ -377,15 +377,29 @@ body {
 }
 
 .locationSelect:HOVER {
-  background: #ddd;
+  background: #fff;
 }
 
 .locationSelect:HOVER td {
   opacity: 0.75;
 }
 
+.locationSelect:HOVER .country {
+  color: black;
+  text-decoration: underline;
+}
+
+.mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
+}
+
 .stat {
-  width: 40px;
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
 }
 
 .valign-top {
