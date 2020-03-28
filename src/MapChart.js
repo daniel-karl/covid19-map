@@ -940,7 +940,7 @@ class MapChart extends Map {
             }
           </svg><br />
           <div>
-              Plot shows <b>{this.state.logmode ? "log" : "linear "}</b> scaled data over time
+              Plot shows data scaled <b>{this.state.logmode ? "logarithmically" : "linearly "}</b>  over time
           </div>
         </div>
       )
