@@ -917,7 +917,7 @@ class MapChart extends Map {
                 return(
                   <g>
                     {
-                      this.state.dayOffset === dateIndex - this.state.datasource.datasets.length &&
+                      this.state.dayOffset === dateIndex - this.state.datasource.datasets.length + 1 &&
                       <g className="todayMarker">
                         <rect x={String(dateIndex * barWidth)} y={0} width={barWidth} height={svgHeight}></rect>
                       </g>
