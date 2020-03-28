@@ -111,17 +111,17 @@ export class JHDatasourceProvider extends DatasourceProvider {
             data.absolute.current.recovered= Number(row[8]);
             data.absolute.current.deceased = Number(row[7]);
 
-            data.absolute.growthLast1Day.confirmed = 0;
-            data.absolute.growthLast1Day.recovered = 0;
-            data.absolute.growthLast1Day.deceased = 0;
+            data.absolute.growthLast1Day.confirmed = -1;
+            data.absolute.growthLast1Day.recovered = -1;
+            data.absolute.growthLast1Day.deceased = -1;
 
             data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
             data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
             data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
 
-            data.ppm.growthLast1Day.confirmed = 0;
-            data.ppm.growthLast1Day.recovered = 0;
-            data.ppm.growthLast1Day.deceased = 0;
+            data.ppm.growthLast1Day.confirmed = -1;
+            data.ppm.growthLast1Day.recovered = -1;
+            data.ppm.growthLast1Day.deceased = -1;
 
             dataset[name] = data;
         }
@@ -135,21 +135,21 @@ export class JHDatasourceProvider extends DatasourceProvider {
                     let lastData = ds.datasets[ds.datasets.length - 2].data[name];
 
                     let data = new Data();
-                    data.absolute.current.confirmed = lastData ? lastData.absolute.current.confirmed : 0;
-                    data.absolute.current.recovered = lastData ? lastData.absolute.current.recovered : 0;
-                    data.absolute.current.deceased = lastData ? lastData.absolute.current.deceased : 0;
+                    data.absolute.current.confirmed = lastData ? lastData.absolute.current.confirmed : -1;
+                    data.absolute.current.recovered = lastData ? lastData.absolute.current.recovered : -1;
+                    data.absolute.current.deceased = lastData ? lastData.absolute.current.deceased : -1;
 
-                    data.absolute.growthLast1Day.confirmed = lastData ? lastData.absolute.growthLast1Day.confirmed : 0;
-                    data.absolute.growthLast1Day.recovered = lastData ? lastData.absolute.growthLast1Day.recovered : 0;
-                    data.absolute.growthLast1Day.deceased = lastData ? lastData.absolute.growthLast1Day.deceased : 0;
+                    data.absolute.growthLast1Day.confirmed = lastData ? lastData.absolute.growthLast1Day.confirmed : -1;
+                    data.absolute.growthLast1Day.recovered = lastData ? lastData.absolute.growthLast1Day.recovered : -1;
+                    data.absolute.growthLast1Day.deceased = lastData ? lastData.absolute.growthLast1Day.deceased : -1;
 
-                    data.absolute.growthLast3Days.confirmed = lastData ? lastData.absolute.growthLast3Days.confirmed : 0;
-                    data.absolute.growthLast3Days.recovered = lastData ? lastData.absolute.growthLast3Days.recovered : 0;
-                    data.absolute.growthLast3Days.deceased = lastData ? lastData.absolute.growthLast3Days.deceased : 0;
+                    data.absolute.growthLast3Days.confirmed = lastData ? lastData.absolute.growthLast3Days.confirmed : -1;
+                    data.absolute.growthLast3Days.recovered = lastData ? lastData.absolute.growthLast3Days.recovered : -1;
+                    data.absolute.growthLast3Days.deceased = lastData ? lastData.absolute.growthLast3Days.deceased : -1;
 
-                    data.absolute.growthLast7Days.confirmed = lastData ? lastData.absolute.growthLast7Days.confirmed : 0;
-                    data.absolute.growthLast7Days.recovered = lastData ? lastData.absolute.growthLast7Days.recovered : 0;
-                    data.absolute.growthLast7Days.deceased = lastData ? lastData.absolute.growthLast7Days.deceased : 0;
+                    data.absolute.growthLast7Days.confirmed = lastData ? lastData.absolute.growthLast7Days.confirmed : -1;
+                    data.absolute.growthLast7Days.recovered = lastData ? lastData.absolute.growthLast7Days.recovered : -1;
+                    data.absolute.growthLast7Days.deceased = lastData ? lastData.absolute.growthLast7Days.deceased : -1;
 
                     dataset.data[name] = data;
                 }
