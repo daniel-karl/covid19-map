@@ -686,6 +686,9 @@ class MapChart extends Map {
     return (
       this.state.momentum !== "none" &&
       Object.keys(ds.data).map((name, locationIndex) => {
+        if(ds.data[name].absolute.current.confirmed === -1) {
+            return;
+        }
         let pop = Population.ABSOLUTE[name];
         let size;
         switch (this.state.momentum) {

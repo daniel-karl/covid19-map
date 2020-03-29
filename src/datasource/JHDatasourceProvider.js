@@ -75,13 +75,29 @@ export class JHDatasourceProvider extends DatasourceProvider {
             data.absolute.growthLast1Day.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.recovered;
             data.absolute.growthLast1Day.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.deceased;
 
+            data.absolute.growthLast3Days.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.confirmed;
+            data.absolute.growthLast3Days.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.recovered;
+            data.absolute.growthLast3Days.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.deceased;
+
+            data.absolute.growthLast7Days.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.confirmed;
+            data.absolute.growthLast7Days.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.recovered;
+            data.absolute.growthLast7Days.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.deceased;
+
             data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
             data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
             data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
 
-            data.ppm.growthLast1Day.confirmed = data.ppm.current.confirmed - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.confirmed;
-            data.ppm.growthLast1Day.recovered = data.ppm.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.recovered;
-            data.ppm.growthLast1Day.deceased = data.ppm.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].ppm.current.deceased;
+            data.ppm.growthLast1Day.confirmed = this.ppm(name, data.absolute.growthLast1Day.confirmed);
+            data.ppm.growthLast1Day.recovered = this.ppm(name, data.absolute.growthLast1Day.recovered);
+            data.ppm.growthLast1Day.deceased = this.ppm(name, data.absolute.growthLast1Day.deceased);
+
+            data.ppm.growthLast3Days.confirmed = this.ppm(name, data.absolute.growthLast3Days.confirmed);
+            data.ppm.growthLast3Days.recovered = this.ppm(name, data.absolute.growthLast3Days.recovered);
+            data.ppm.growthLast3Days.deceased = this.ppm(name, data.absolute.growthLast3Days.deceased);
+
+            data.ppm.growthLast7Days.confirmed = this.ppm(name, data.absolute.growthLast7Days.confirmed);
+            data.ppm.growthLast7Days.recovered = this.ppm(name, data.absolute.growthLast7Days.recovered);
+            data.ppm.growthLast7Days.deceased = this.ppm(name, data.absolute.growthLast7Days.deceased);
 
             dataset[name] = data;
         }
