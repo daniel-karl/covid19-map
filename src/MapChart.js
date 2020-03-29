@@ -75,6 +75,7 @@ class MapChart extends Map {
       datasource: null,
       leadership: "active",
       selectedLocations: ["Hubei, China", "Italy", "US", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Austria"],
+      showUScounties: false,
 
       lat: 0,
       lng: 0,
@@ -87,7 +88,7 @@ class MapChart extends Map {
     this.map = null;
 
     let that = this;
-    new JHDatasourceProvider().getDatasource((datasource) => {
+    new JHDatasourceProvider().getDatasource(false,  (datasource) => {
       that.state.datasource = datasource;
       that.setState({});
     });
@@ -176,6 +177,32 @@ class MapChart extends Map {
                   <option value="last3">Momentum (last 3 days)</option>
                   <option value="last7">Momentum (last 7 days)</option>
                 </Form.Control>
+                <Form.Check
+                  inline
+                  className="small"
+                  checked={this.state.showUScounties}
+                  label={
+                    <Tooltip
+                      title="Show live US county data (slows perfomance of the application)."
+                      small={"true"}
+                      arrow
+                      disableTouchListener={true}
+                    >
+                      <span>Incl. US counties (slows speed)</span>
+                    </Tooltip>
+                  }
+                  type={"checkbox"}
+                  name={"a"}
+                  id={`uscounties-checkbox`}
+                  onChange={() => {
+                    new JHDatasourceProvider().getDatasource(!that.state.showUScounties,  (datasource) => {
+                      that.setState({
+                          showUScounties: !that.state.showUScounties,
+                          datasource: datasource
+                      });
+                    });
+                  }}
+                /><br />
                 <span className="small text-muted mr-2">Normalization:</span>
                 <Tooltip
                     title="Scale the size of the glyphs on the map according to different criteria."

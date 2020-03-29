@@ -9,6 +9,25 @@ export default class BarChart extends React.Component {
     return (
       <svg width="272" heigth="145" role="img">
         {
+          datasource.datasets[datasource.datasets.length - 2].data[name].absolute.current.confirmed === -1 &&
+          [
+            <text
+              className={"barChartNoData"}
+              x={70}
+              y={70}
+            >
+              No historic data provided.
+            </text>,
+            <text
+              className={"legend"}
+              x={65}
+              y={85}
+            >
+              Showing single bar of today only &nbsp; &nbsp; &nbsp;⟶
+            </text>
+          ]
+        }
+        {
           Object.values(datasource.datasets).map((dataset, dateIndex) => {
             let svgWidth = 272;
             let svgHeight = 145;

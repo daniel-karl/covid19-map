@@ -16,11 +16,12 @@ export class JHDatasourceProvider extends DatasourceProvider {
         this.historyRecoveredUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
         this.historyDeceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
 
+        this.liveUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases.csv";
         this.liveCountriesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv";
         this.liveUSStatesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
     }
 
-    getDatasource = (callback) => {
+    getDatasource = (loadUScounties, callback) => {
         let ds = new Datasource();
         // load confirmed data
         this.loadFromUrl(this.historyConfirmedUrl, (rawConfirmed) => {
@@ -28,19 +29,26 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 this.loadFromUrl(this.historyDeceasedUrl, (rawDeceased) => {
                     this.loadFromUrl(this.liveCountriesUrl, (rawCountries) => {
                         this.loadFromUrl(this.liveUSStatesUrl, (rawUSStates) => {
-                            // load history
-                            this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
-                            // load live stats
-                            this.parseLiveCountries(ds, rawCountries.data);
-                            this.parseLiveUSStates(ds, rawUSStates.data);
-                            this.fillEmpty(ds);
-                            // infer data
-                            this.computeActive(ds);
-                            this.computeConfirmedProjected(ds);
-                            this.computeContainmentScore(ds);
-                            this.computeTotals(ds);
+                            this.loadFromUrl(this.liveUrl, (rawLive) => {
+                                // load history
+                                this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
+                                // load live stats
+                                ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
+                                if(loadUScounties) {
+                                    this.parseLive(ds, rawLive.data);
+                                } else {
+                                    this.parseLiveCountries(ds, rawCountries.data);
+                                    this.parseLiveUSStates(ds, rawUSStates.data);
+                                }
+                                this.fillEmpty(ds);
+                                // infer data
+                                this.computeActive(ds);
+                                this.computeConfirmedProjected(ds);
+                                this.computeContainmentScore(ds);
+                                this.computeTotals(ds);
 
-                            callback(ds);
+                                callback(ds);
+                            });
                         });
                     });
                 });
@@ -48,8 +56,77 @@ export class JHDatasourceProvider extends DatasourceProvider {
         });
     };
 
+    parseLive(ds, tableCountries) {
+        let dataset = ds.datasets[ds.datasets.length - 1].data;
+        let header = true;
+        for(let row of tableCountries) {
+            if(header) {
+                header = false;
+                continue;
+            }
+            if(row.length < 3) {
+                continue
+            }
+            let name = "";
+            if(row[1]) {
+                name += row[1] + ", ";
+            }
+            if(row[2]) {
+                name += row[2] + ", ";
+            }
+            if(row[3]) {
+                name += row[3];
+            }
+            if(this.BLACKLIST_NAMES.includes(name)) {
+                continue;
+            }
+            ds.locations[name] = [row[6], row[5]];
+
+            let data = new Data();
+            data.absolute.current.confirmed = Number(row[7]);
+            data.absolute.current.recovered= Number(row[9]);
+            data.absolute.current.deceased = Number(row[8]);
+
+            data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
+            data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
+            data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
+
+            if(ds.datasets[ds.datasets.length - 2].data[name]) {
+                data.absolute.growthLast1Day.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.confirmed;
+                data.absolute.growthLast1Day.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.recovered;
+                data.absolute.growthLast1Day.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 2].data[name].absolute.current.deceased;
+
+                data.ppm.growthLast1Day.confirmed = this.ppm(name, data.absolute.growthLast1Day.confirmed);
+                data.ppm.growthLast1Day.recovered = this.ppm(name, data.absolute.growthLast1Day.recovered);
+                data.ppm.growthLast1Day.deceased = this.ppm(name, data.absolute.growthLast1Day.deceased);
+            }
+
+            if(ds.datasets[ds.datasets.length - 4].data[name]) {
+                data.absolute.growthLast3Days.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.confirmed;
+                data.absolute.growthLast3Days.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.recovered;
+                data.absolute.growthLast3Days.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 4].data[name].absolute.current.deceased;
+
+                data.ppm.growthLast3Days.confirmed = this.ppm(name, data.absolute.growthLast3Days.confirmed);
+                data.ppm.growthLast3Days.recovered = this.ppm(name, data.absolute.growthLast3Days.recovered);
+                data.ppm.growthLast3Days.deceased = this.ppm(name, data.absolute.growthLast3Days.deceased);
+            }
+
+            if(ds.datasets[ds.datasets.length - 8].data[name]) {
+                data.absolute.growthLast7Days.confirmed = data.absolute.current.confirmed - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.confirmed;
+                data.absolute.growthLast7Days.recovered = data.absolute.current.recovered - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.recovered;
+                data.absolute.growthLast7Days.deceased = data.absolute.current.deceased - ds.datasets[ds.datasets.length - 8].data[name].absolute.current.deceased;
+
+                data.ppm.growthLast7Days.confirmed = this.ppm(name, data.absolute.growthLast7Days.confirmed);
+                data.ppm.growthLast7Days.recovered = this.ppm(name, data.absolute.growthLast7Days.recovered);
+                data.ppm.growthLast7Days.deceased = this.ppm(name, data.absolute.growthLast7Days.deceased);
+            }
+
+            dataset[name] = data;
+        }
+    }
+
     parseLiveCountries(ds, tableCountries) {
-        ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
+        // ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
         let dataset = ds.datasets[ds.datasets.length - 1].data;
         let header = true;
         for(let row of tableCountries) {
@@ -114,7 +191,13 @@ export class JHDatasourceProvider extends DatasourceProvider {
             if(row.length < 3) {
                 continue
             }
-            let name = (row[1] ? row[1] + ", " + row[2] : row[2]) ? (row[1] ? row[1] + ", " + row[2] : row[2]) : "";
+            let name = "";
+            if(row[1]) {
+                name += row[1] + ", ";
+            }
+            if(row[2]) {
+                name += row[2];
+            }
             if(this.BLACKLIST_NAMES.includes(name)) {
                 continue;
             }
@@ -327,7 +410,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
     };
 
     parseRow = (ds, attribute, row) => {
-        let name = (row[0] ? row[0] + ", " + row[1] : row[1]) ? (row[0] ? row[0] + ", " + row[1] : row[1]) : "";
+        let name = (row[0] ? row[0] + ", " + row[1] : row[1]) ? row[1] : "";
         if(this.BLACKLIST_NAMES.includes(name)) {
             return;
         }
@@ -378,7 +461,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
 
     ppm = (name, value) => {
         if(!Population.ABSOLUTE[name]) {
-            console.log("No population data for: " + name);
+            // console.log("No population data for: " + name);
         }
         return 1000000 * value / Population.ABSOLUTE[name];
     };
