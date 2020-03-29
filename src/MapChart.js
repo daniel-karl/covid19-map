@@ -581,28 +581,30 @@ class MapChart extends Map {
             {
               Object.keys(ds.data).sort((a, b) => {
                 let mode = this.state.ppmmode ? "ppm" : "absolute";
+                let ca = a;
+                let cb = b;
                 if (this.state.leadership==="name") {
                   let c = a;
                   a = b;
                   b = c;
 		        }
                 else if (this.state.leadership==="containmentScore") {
-                  a = ds.data[a].containmentScore;
-                  b = ds.data[b].containmentScore;
+                  ca = ds.data[a].containmentScore;
+                  cb = ds.data[b].containmentScore;
 		        } else {
-                  a = ds.data[a][mode].current[this.state.leadership];
-                  a = isNaN(a) ? 0 : a;
-                  b = ds.data[b][mode].current[this.state.leadership];
-                  b = isNaN(b) ? 0 : b;
+                  ca = ds.data[a][mode].current[this.state.leadership];
+                  ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
+                  cb = ds.data[b][mode].current[this.state.leadership];
+                  cb = (Population.ABSOLUTE[b]<ONE_M || isNaN(cb))  ? 0 : cb;
                 }
-                if(a === null && b === null) {
+                if(ca === null && cb === null) {
                   return 0;
-                } else if(a === null) {
+                } else if(ca === null) {
                   return 1;
-                } else if(b === null) {
+                } else if(cb === null) {
                   return -1;
                 } else {
-                  return (a >= b) ? -1 : 1;
+                  return (ca >= cb) ? -1 : 1;
                 }
               }).map((name, locationIndex) => {
                 if(name !== "Canada") {
