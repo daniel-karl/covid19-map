@@ -585,8 +585,8 @@ class MapChart extends Map {
                 let cb = b;
                 if (this.state.leadership==="name") {
                   let c = a;
-                  a = b;
-                  b = c;
+                  ca = b;
+                  cb = c;
 		        }
                 else if (this.state.leadership==="containmentScore") {
                   ca = ds.data[a].containmentScore;
