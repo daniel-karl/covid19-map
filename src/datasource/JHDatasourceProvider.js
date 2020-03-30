@@ -273,13 +273,8 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 // sums
                 if(
                     !name.endsWith(", US") &&
-                    !name.endsWith(", China") &&
-                    !name.endsWith(", Australia") &&
-                    !name.endsWith(", France") &&
-                    !name.endsWith(", Netherlands") &&
-                    !name.endsWith(", United Kingdom") &&
-                    !name.endsWith(", Canada") &&
-                    !name.endsWith(", Denmark")
+                    name!=="China" &&
+                    name!=="Australia"
                 ) {
                     dataset.totalConfirmed += locationData.absolute.current.confirmed;
                     dataset.totalRecovered += locationData.absolute.current.recovered;
