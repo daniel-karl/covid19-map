@@ -86,7 +86,7 @@ export const RATES = {
   "Ukraine": 2264,
   "United Arab Emirates": 220000,
   "United Kingdom": 127737,
-  "United States": 916995,
+  "US": 916995,
   "Uruguay": 1538,
   "Vietnam": 35808,
 
