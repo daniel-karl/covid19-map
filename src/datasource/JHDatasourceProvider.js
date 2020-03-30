@@ -272,7 +272,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 let locationData = dataset.data[name];
 
                 // sums
-                if(!name.endsWith(", US")) {
+                if(!name.endsWith(", US") && !name.endsWith(", China") && !name.endsWith(", Australia")) {
                     dataset.totalConfirmed += locationData.absolute.current.confirmed;
                     dataset.totalRecovered += locationData.absolute.current.recovered;
                     dataset.totalDeceased += locationData.absolute.current.deceased;
