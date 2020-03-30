@@ -36,10 +36,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
                                 ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
                                 if(loadUScounties) {
                                     this.parseLive(ds, rawLive.data);
-                                } else {
-                                    this.parseLiveCountries(ds, rawCountries.data);
-                                    this.parseLiveUSStates(ds, rawUSStates.data);
                                 }
+                                this.parseLiveCountries(ds, rawCountries.data);
+                                this.parseLiveUSStates(ds, rawUSStates.data);
                                 this.fillEmpty(ds);
                                 // infer data
                                 this.computeActive(ds);
