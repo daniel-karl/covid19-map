@@ -652,10 +652,10 @@ class MapChart extends Map {
 
 		        }
                 else if (this.state.leadership==="tested") {
-                  ca = Testing.RATES[a];
-                  ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
-                  cb = Testing.RATES[b];
-                  cb = (Population.ABSOLUTE[b]<ONE_M || isNaN(cb))  ? 0 : cb;
+                  ca = this.state.ppmmode ? Testing.RATES[a]*ONE_M/Population.ABSOLUTE[a] : Testing.RATES[a];
+                  ca = (isNaN(ca)) ? 0 : ca;
+                  cb = this.state.ppmmode ? Testing.RATES[b]*ONE_M/Population.ABSOLUTE[b] : Testing.RATES[b];
+                  cb = (isNaN(cb)) ? 0 : cb;
                 }
                 else {
                   ca = ds.data[a][mode].current[this.state.leadership];
@@ -683,6 +683,7 @@ class MapChart extends Map {
                   if(containmentScore === null) {
                     containmentScore = "N/A";
                   }
+                  let tested = this.state.ppmmode ? Testing.RATES[name]*ONE_M/Population.ABSOLUTE[name] : Testing.RATES[name];
                   return (
                     <tr
                         className="locationSelect"
@@ -707,7 +708,7 @@ class MapChart extends Map {
                       <td className={"p-1 valign-top stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
                       <td className={"p-1 valign-top stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
                       <td className={"p-1 valign-top stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
-                        <td className={"p-1 valign-top stat text-primary"} align={"right"}>{Utils.rounded(Testing.RATES[name])}</td>
+                      <td className={"p-1 valign-top stat text-primary"} align={"right"}>{Utils.rounded(tested)}</td>
                     </tr>
                   )
                 }
