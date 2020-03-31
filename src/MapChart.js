@@ -65,7 +65,8 @@ class MapChart extends Map {
       logmode: true,
       momentum: "none",
       ppmmode: false,
-      minimized: false,
+      minimized_controls: false,
+      minimized_timeline: false,
       testmode: true,
       testscale: 0,
       dayOffset: 0,
@@ -143,21 +144,21 @@ class MapChart extends Map {
       that.state.setTotalConfirmedProjected(ds.totalConfirmedProjected * that.state.testscale);
       return (
           <>
-            <div className={"small controls" + (that.state.minimized ? " minimized" : "")}>
+            <div className={"small controls" + (that.state.minimized_controls ? " minimized" : "")}>
               {/*
                  <Form.Check inline className="small hideInJh" checked={that.state.momentum==="none" } label="Live situation" type={"radio"} name={"a"} id={`inline-radio-4`} onClick={() => {that.setState({momentum: "none"});}} />
                  <Form.Check inline className="small hideInJh" checked={that.state.momentum==="last1" } label="Momentum last 1 day" type={"radio"} name={"b"} id={`inline-radio-5`} onClick={() => {that.setState({momentum: "last1", chart: "pie"});}} />
                  <Form.Check inline className="small hideInJh" checked={that.state.momentum==="last3" } label="Momentum last 3 days" type={"radio"} name={"b"} id={`inline-radio-6`} onClick={() => {that.setState({momentum: "last3", chart: "pie"});}} />
                  <Form.Check inline className="small hideInJh" checked={that.state.momentum==="last7" } label="Momentum last 7 days" type={"radio"} name={"b"} id={`inline-radio-7`} onClick={() => {that.setState({momentum: "last7", chart: "pie"});}} />
               */}
-              <button hidden={that.state.minimized} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized: true})
+              <button hidden={that.state.minimized_controls} className={"btn-collapse"} onClick={() => {
+                that.setState({minimized_controls: true})
               }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
-              <button hidden={!that.state.minimized} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized: false})
+              <button hidden={!that.state.minimized_controls} className={"btn-collapse"} onClick={() => {
+                that.setState({minimized_controls: false})
               }}>open
               </button>
-              <div hidden={that.state.minimized}>
+              <div hidden={that.state.minimized_controls}>
                 <span className="small text-muted mr-2">Mode:</span>
                 <Tooltip
                     title={<span><b>Live mode:</b> Glyphs show latest confirmed, recovered and deceased numbers.<br/><br/><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
@@ -321,136 +322,145 @@ class MapChart extends Map {
                 </div>
               </div>
             </div>
-            <div className="small timeline">
-              <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}>
-                <b>{ds.date}</b>
+            <div className={"small timeline" + (that.state.minimized_timeline ? " minimized" : "")}>
+              <button hidden={that.state.minimized_timeline} className={"btn-collapse"} onClick={() => {
+                that.setState({minimized_timeline: true})
+              }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
+              <button hidden={!that.state.minimized_timeline} className={"btn-collapse"} onClick={() => {
+                that.setState({minimized_timeline: false})
+              }}>open
               </button>
-              <div className={"race mb-1"}>
-                <RaceChart
-                  datasource={this.state.datasource}
-                  dayOffset={this.state.dayOffset}
-                  logmode={this.state.logmode}
-                  names={this.state.selectedLocations}
-                />
-              </div>
-              <button
-                  className={this.state.dayOffset < 0 ? "btn btn-sm btn-dark leftTime" : "btn btn-sm btn-outline-dark leftTime"}
-                  style={{height: "30px", lineHeight: "20px"}}
-                  onClick={() => {
-                      this.setState({
-                         dayOffset: this.state.dayOffset - 1,
-                         testmode: false
-                      });
-                  }}
-              ><FontAwesomeIcon icon={faStepBackward}/></button>
-
-              <button
-                  className={"btn btn-sm btn-secondary midTime"}
-                  style={this.state.dayOffset < 0 && !this.state.playmode ? {
-                    height: "30px",
-                    lineHeight: "20px"
-                  } : {display: "none"}}
-                  onClick={() => {
-                    this.state.dayOffset = Math.min(0, this.state.dayOffset + 1);
-                    if (this.state.dayOffset === 0) {
-                      this.state.playmode = false;
-                    } else {
-                      this.state.testmode = false;
-                    }
-                    this.render();
-                  }}
-              ><FontAwesomeIcon icon={faStepForward}/></button>
-
-              <button
-                  className={this.state.dayOffset < 0 ? "btn btn-sm btn-outline-danger todayTime" : "btn btn-sm btn-danger todayTime"}
-                  style={{height: "30px", lineHeight: "20px"}}
-                  onClick={() => {
-                    this.setState({
-                      dayOffset: 0
-                    });
-                  }}
-              >Latest</button>
-
-              <button
-                  className={"btn btn-sm btn-success play"}
-                  style={{height: "30px", lineHeight: "20px"}}
-                  onClick={() => {
-                    document.getElementsByClassName("todayTime")[0].style.display = "none";
-                    document.getElementsByClassName("play")[0].style.display = "none";
-                    document.getElementsByClassName("leftTime")[0].style.display = "none";
-                    document.getElementsByClassName("midTime")[0].style.display = "none";
-
-                    var now = new Date();
-                    var startDate = new Date("January 22, 2020 00:00:00");
-                    const oneDay = 24 * 60 * 60 * 1000;
-                    this.setState({
-                      dayOffset:  -Math.round(Math.abs((now - startDate) / oneDay)),
-                      testmode: false,
-                      testscale: 0,
-                      playmode: true,
-                      playpause: false
-                    });
-                    let interval = setInterval(() => {
-                      if (!that.state.playmode) {
-                        clearInterval(interval);
-                        this.setState({
-                            dayOffset: 0
-                        });
-                        return;
-                      }
-                      if (!this.state.playpause) {
-                        this.setState({
-                            dayOffset: this.state.dayOffset + 1
-                        });
-                        if (this.state.dayOffset === 0) {
-                          document.getElementsByClassName("todayTime")[0].style.display = "inline";
-                          document.getElementsByClassName("play")[0].style.display = "inline";
-                          document.getElementsByClassName("leftTime")[0].style.display = "inline";
-                          document.getElementsByClassName("midTime")[0].style.display = "none";
+              <div hidden={that.state.minimized_timeline}>
+                  <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}>
+                    <b>{ds.date}</b>
+                  </button>
+                  <div className={"race mb-1"}>
+                    <RaceChart
+                      datasource={this.state.datasource}
+                      dayOffset={this.state.dayOffset}
+                      logmode={this.state.logmode}
+                      names={this.state.selectedLocations}
+                    />
+                  </div>
+                  <button
+                      className={this.state.dayOffset < 0 ? "btn btn-sm btn-dark leftTime" : "btn btn-sm btn-outline-dark leftTime"}
+                      style={{height: "30px", lineHeight: "20px"}}
+                      onClick={() => {
                           this.setState({
-                             playmode: false,
-                             testscale: 0,
+                             dayOffset: this.state.dayOffset - 1,
                              testmode: false
                           });
+                      }}
+                  ><FontAwesomeIcon icon={faStepBackward}/></button>
+
+                  <button
+                      className={"btn btn-sm btn-secondary midTime"}
+                      style={this.state.dayOffset < 0 && !this.state.playmode ? {
+                        height: "30px",
+                        lineHeight: "20px"
+                      } : {display: "none"}}
+                      onClick={() => {
+                        this.state.dayOffset = Math.min(0, this.state.dayOffset + 1);
+                        if (this.state.dayOffset === 0) {
+                          this.state.playmode = false;
+                        } else {
+                          this.state.testmode = false;
                         }
-                      }
-                    }, 500);
-                  }}
-              ><FontAwesomeIcon icon={faPlayCircle}/></button>
+                        this.render();
+                      }}
+                  ><FontAwesomeIcon icon={faStepForward}/></button>
 
-              <button
-                  className={"btn btn-sm pause " + (this.state.playpause ? "btn-success" : "btn-outline-dark")}
-                  style={this.state.playmode ? {height: "30px", lineHeight: "20px"} : {display: "none"}}
-                  onClick={() => {
-                      this.setState({
-                          playpause: !this.state.playpause
-                      });
-                  }}
-              >
-                {
-                  !this.state.playpause &&
-                  [<FontAwesomeIcon icon={faPauseCircle}/>, " Pause"]
-                }
-                {
-                  this.state.playpause &&
-                  [<FontAwesomeIcon icon={faPlayCircle}/>, " Continue"]
-                }
-              </button>
+                  <button
+                      className={this.state.dayOffset < 0 ? "btn btn-sm btn-outline-danger todayTime" : "btn btn-sm btn-danger todayTime"}
+                      style={{height: "30px", lineHeight: "20px"}}
+                      onClick={() => {
+                        this.setState({
+                          dayOffset: 0
+                        });
+                      }}
+                  >Latest</button>
 
-              <button
-                  className={"btn btn-sm btn-danger stop"}
-                  style={this.state.playmode ? {height: "30px", lineHeight: "20px"} : {display: "none"}}
-                  onClick={() => {
-                    document.getElementsByClassName("todayTime")[0].style.display = "inline";
-                    document.getElementsByClassName("play")[0].style.display = "inline";
-                    document.getElementsByClassName("leftTime")[0].style.display = "inline";
-                    document.getElementsByClassName("midTime")[0].style.display = "none";
-                    this.state.playmode = false;
-                    this.state.testscale = 0;
-                    this.render();
-                  }}
-              ><FontAwesomeIcon icon={faStopCircle}/> Stop
-              </button>
+                  <button
+                      className={"btn btn-sm btn-success play"}
+                      style={{height: "30px", lineHeight: "20px"}}
+                      onClick={() => {
+                        document.getElementsByClassName("todayTime")[0].style.display = "none";
+                        document.getElementsByClassName("play")[0].style.display = "none";
+                        document.getElementsByClassName("leftTime")[0].style.display = "none";
+                        document.getElementsByClassName("midTime")[0].style.display = "none";
+
+                        var now = new Date();
+                        var startDate = new Date("January 22, 2020 00:00:00");
+                        const oneDay = 24 * 60 * 60 * 1000;
+                        this.setState({
+                          dayOffset:  -Math.round(Math.abs((now - startDate) / oneDay)),
+                          testmode: false,
+                          testscale: 0,
+                          playmode: true,
+                          playpause: false
+                        });
+                        let interval = setInterval(() => {
+                          if (!that.state.playmode) {
+                            clearInterval(interval);
+                            this.setState({
+                                dayOffset: 0
+                            });
+                            return;
+                          }
+                          if (!this.state.playpause) {
+                            this.setState({
+                                dayOffset: this.state.dayOffset + 1
+                            });
+                            if (this.state.dayOffset === 0) {
+                              document.getElementsByClassName("todayTime")[0].style.display = "inline";
+                              document.getElementsByClassName("play")[0].style.display = "inline";
+                              document.getElementsByClassName("leftTime")[0].style.display = "inline";
+                              document.getElementsByClassName("midTime")[0].style.display = "none";
+                              this.setState({
+                                 playmode: false,
+                                 testscale: 0,
+                                 testmode: false
+                              });
+                            }
+                          }
+                        }, 500);
+                      }}
+                  ><FontAwesomeIcon icon={faPlayCircle}/></button>
+
+                  <button
+                      className={"btn btn-sm pause " + (this.state.playpause ? "btn-success" : "btn-outline-dark")}
+                      style={this.state.playmode ? {height: "30px", lineHeight: "20px"} : {display: "none"}}
+                      onClick={() => {
+                          this.setState({
+                              playpause: !this.state.playpause
+                          });
+                      }}
+                  >
+                    {
+                      !this.state.playpause &&
+                      [<FontAwesomeIcon icon={faPauseCircle}/>, " Pause"]
+                    }
+                    {
+                      this.state.playpause &&
+                      [<FontAwesomeIcon icon={faPlayCircle}/>, " Continue"]
+                    }
+                  </button>
+
+                  <button
+                      className={"btn btn-sm btn-danger stop"}
+                      style={this.state.playmode ? {height: "30px", lineHeight: "20px"} : {display: "none"}}
+                      onClick={() => {
+                        document.getElementsByClassName("todayTime")[0].style.display = "inline";
+                        document.getElementsByClassName("play")[0].style.display = "inline";
+                        document.getElementsByClassName("leftTime")[0].style.display = "inline";
+                        document.getElementsByClassName("midTime")[0].style.display = "none";
+                        this.state.playmode = false;
+                        this.state.testscale = 0;
+                        this.render();
+                      }}
+                  ><FontAwesomeIcon icon={faStopCircle}/> Stop
+                  </button>
+              </div>
             </div>
             {
               that.state.momentum !== "none" &&
@@ -598,6 +608,27 @@ class MapChart extends Map {
                       });
                     }}
                   >
+                    <FontAwesomeIcon icon={faVial} size={"lg"}/>
+                  </a>
+                </LightTooltip>
+              </td>
+              <td className={"p-1 text-primary sortHeader"} align={"center"}>
+                <LightTooltip
+                  title={
+                    <div style={{textAlign: "justify"}}>
+                      Sort by <b>tested</b>
+                    </div>
+                  }
+                  small={"true"}
+                  disableTouchListener={true}
+                >
+                  <a
+                    onClick={() => {
+                      this.setState({
+                        leadership: "tested"
+                      });
+                    }}
+                  >
                     <FontAwesomeIcon icon={faHeartBroken} size={"lg"}/>
                   </a>
                 </LightTooltip>
@@ -618,7 +649,15 @@ class MapChart extends Map {
                 else if (this.state.leadership==="containmentScore") {
                   ca = ds.data[a].containmentScore;
                   cb = ds.data[b].containmentScore;
-		        } else {
+
+		        }
+                else if (this.state.leadership==="tested") {
+                  ca = Testing.RATES[a];
+                  ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
+                  cb = Testing.RATES[b];
+                  cb = (Population.ABSOLUTE[b]<ONE_M || isNaN(cb))  ? 0 : cb;
+                }
+                else {
                   ca = ds.data[a][mode].current[this.state.leadership];
                   ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
                   cb = ds.data[b][mode].current[this.state.leadership];
@@ -668,6 +707,7 @@ class MapChart extends Map {
                       <td className={"p-1 valign-top stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
                       <td className={"p-1 valign-top stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
                       <td className={"p-1 valign-top stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
+                        <td className={"p-1 valign-top stat text-primary"} align={"right"}>{Utils.rounded(Testing.RATES[name])}</td>
                     </tr>
                   )
                 }
@@ -692,11 +732,11 @@ class MapChart extends Map {
           { this.momentumMarkers(ds) }
         </LayerGroup>
 
-        <LayerGroup key={4} className={"deceasedLayer"}>
+        <LayerGroup key={4} className={"projectedLayer"}>
           { this.projectedMarkers(ds) }
         </LayerGroup>
 
-        <LayerGroup key={3} className={"deceasedLayer"}>
+        <LayerGroup key={3} className={"confirmedLayer"}>
           { this.confirmedMarkers(ds) }
         </LayerGroup>
 
@@ -842,7 +882,7 @@ class MapChart extends Map {
               this.setState({});
           }}
         >
-          <LTooltip direction="bottom" offset={[0, 20]} opacity={1}>
+          <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
             {
               this.tooltip(name, data)
             }

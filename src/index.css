@@ -73,12 +73,18 @@ body {
 
 @media only screen and (max-width: 500px) {
   .leaderboard {
-    display: none !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 0px !important;
+    left: auto !important;
+    width: 100% !important;
+    height: 33%;
   }
 
   .timeline {
-    left: 10px !important;
-    right: auto !important;
+    top: 10px !important;
+    right: 10px !important;
+    bottom: auto !important;
   }
 }
 
@@ -87,7 +93,7 @@ body {
   box-shadow: 0px 0px 5px #999;
 }
 
-.controls.minimized {
+.controls.minimized, .timeline.minimized {
   width: 51px;
   height: 24px;
   border-radius: 3px;
@@ -96,7 +102,7 @@ body {
   box-shadow: 0px 0px 5px #999;
 }
 
-.controls.minimized .btn-collapse{
+.controls.minimized .btn-collapse, .timeline.minimized .btn-collapse {
   top: auto;
   left: auto;
   right: auto;
@@ -110,6 +116,10 @@ body {
   font-variant: small-caps;
   line-height: normal !important;
   height: auto !important;
+}
+
+.timeline.minimized .btn-collapse {
+  margin-left: -18px;
 }
 
 .timeline {
@@ -289,7 +299,7 @@ body {
   overflow: scroll;
   max-height: 100%;
   width: 400px;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .containmentScore {
@@ -391,15 +401,15 @@ body {
 
 .mono {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .stat {
-  width: 50px !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
+  width: 45px !important;
+  min-width: 45px !important;
+  max-width: 45px !important;
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .valign-top {
@@ -530,5 +540,10 @@ g.todayMarkerLineChart {
 
 
 div.leaflet-pane.leaflet-tooltip-pane * {
+  z-index: 1002 !important;
+}
+
+
+.markerTooltip, .deceasedLayer {
   z-index: 1002 !important;
 }
