@@ -263,7 +263,7 @@ class MapChart extends Map {
                 {
                   that.state.momentum === "none" && !that.state.playmode &&
                   [
-                    <span className="small text-muted mr-2">Project testing rates:</span>,
+                    <span className="small text-muted mr-2">'What if?'-testing rates:</span>,
                     <Tooltip
                         title="Display how many confirmed cases there might be if local testing rate was coinciding with global average."
                         small={"true"}
