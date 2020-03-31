@@ -296,9 +296,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
             Object.keys(dataset.data).map((name, nameIndex) => {
                 let locationData = dataset.data[name];
                 if(dateIndex < ds.datasets.length - 1) {
-                    let g1 = 0.5 * locationData.absolute.growthLast1Day.confirmed / locationData.absolute.current.confirmed;
+                    let g1 = 0.1 * locationData.absolute.growthLast1Day.confirmed / locationData.absolute.current.confirmed;
                     let g3 = 0.3 * locationData.absolute.growthLast3Days.confirmed / locationData.absolute.current.confirmed;
-                    let g7 = 0.2 * locationData.absolute.growthLast7Days.confirmed / locationData.absolute.current.confirmed;
+                    let g7 = 0.6 * locationData.absolute.growthLast7Days.confirmed / locationData.absolute.current.confirmed;
                     let g = (g1 + g3 + g7);
                     if (g >= 1) {
                         locationData.containmentScore = 0;
