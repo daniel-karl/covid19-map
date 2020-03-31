@@ -297,7 +297,7 @@ body {
   box-shadow: 0px 0px 5px #999;
   overflow: scroll;
   max-height: 100%;
-  width: 400px;
+  width: 380px;
   font-size: 10px;
 }
 
@@ -404,9 +404,9 @@ body {
 }
 
 .stat {
-  width: 45px !important;
-  min-width: 45px !important;
-  max-width: 45px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 10px;
 }
