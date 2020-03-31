@@ -65,8 +65,8 @@ class MapChart extends Map {
       logmode: true,
       momentum: "none",
       ppmmode: false,
-      minimized_controls: false,
-      minimized_timeline: false,
+      minimized_controls: window.innerWidth < 500,
+      minimized_timeline: window.innerWidth < 500,
       testmode: true,
       testscale: 0,
       dayOffset: 0,
@@ -156,7 +156,7 @@ class MapChart extends Map {
               }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
               <button hidden={!that.state.minimized_controls} className={"btn-collapse"} onClick={() => {
                 that.setState({minimized_controls: false})
-              }}>open
+              }}>settings
               </button>
               <div hidden={that.state.minimized_controls}>
                 <span className="small text-muted mr-2">Mode:</span>
@@ -328,7 +328,7 @@ class MapChart extends Map {
               }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
               <button hidden={!that.state.minimized_timeline} className={"btn-collapse"} onClick={() => {
                 that.setState({minimized_timeline: false})
-              }}>open
+              }}>timeline
               </button>
               <div hidden={that.state.minimized_timeline}>
                   <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}>
