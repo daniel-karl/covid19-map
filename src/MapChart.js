@@ -180,7 +180,7 @@ class MapChart extends Map {
                 </Form.Control>
                 <Form.Check
                   inline
-                  className="small"
+                  className="small mt-1"
                   checked={this.state.showUScounties}
                   label={
                     <Tooltip
