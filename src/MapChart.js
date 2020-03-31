@@ -901,7 +901,7 @@ class MapChart extends Map {
             &nbsp;&middot;&nbsp;
             <Badge variant={"primary"}>
                 <FontAwesomeIcon icon={faVial}/>&nbsp;
-                { Testing.RATES[name] && <span>{(Population.ABSOLUTE[name]&&this.state.ppmmode)?Utils.rounded(Testing.RATES[name]*ONE_M/Population.ABSOLUTE[name]) +"ppm":Utils.rounded(Testing.RATES[name])} tested</span>}
+                { Testing.RATES[name] && <span>{(Population.ABSOLUTE[name]&&this.state.ppmmode)?Utils.rounded(Testing.RATES[name]*ONE_M/Population.ABSOLUTE[name]) +" ppm":Utils.rounded(Testing.RATES[name])} tested</span>}
                 { !Testing.RATES[name] && <span>No testing data</span>}
             </Badge>
             <br/>
