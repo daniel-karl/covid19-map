@@ -608,7 +608,7 @@ class MapChart extends Map {
                       });
                     }}
                   >
-                    <FontAwesomeIcon icon={faVial} size={"lg"}/>
+                    <FontAwesomeIcon icon={faHeartBroken} size={"lg"}/>
                   </a>
                 </LightTooltip>
               </td>
@@ -629,7 +629,7 @@ class MapChart extends Map {
                       });
                     }}
                   >
-                    <FontAwesomeIcon icon={faHeartBroken} size={"lg"}/>
+                    <FontAwesomeIcon icon={faVial} size={"lg"}/>
                   </a>
                 </LightTooltip>
               </td>
