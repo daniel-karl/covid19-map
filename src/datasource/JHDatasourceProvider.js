@@ -16,6 +16,9 @@ export class JHDatasourceProvider extends DatasourceProvider {
         this.historyRecoveredUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
         this.historyDeceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
 
+        this.historyUSConfirmedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
+        this.historyUSDeceasedUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
+
         this.liveUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases.csv";
         this.liveCountriesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv";
         this.liveUSStatesUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
@@ -27,26 +30,33 @@ export class JHDatasourceProvider extends DatasourceProvider {
         this.loadFromUrl(this.historyConfirmedUrl, (rawConfirmed) => {
             this.loadFromUrl(this.historyRecoveredUrl, (rawRecovered) => {
                 this.loadFromUrl(this.historyDeceasedUrl, (rawDeceased) => {
-                    this.loadFromUrl(this.liveCountriesUrl, (rawCountries) => {
-                        this.loadFromUrl(this.liveUSStatesUrl, (rawUSStates) => {
-                            this.loadFromUrl(this.liveUrl, (rawLive) => {
-                                // load history
-                                this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
-                                // load live stats
-                                ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
-                                if(loadUScounties) {
-                                    this.parseLive(ds, rawLive.data);
-                                }
-                                this.parseLiveCountries(ds, rawCountries.data);
-                                this.parseLiveUSStates(ds, rawUSStates.data);
-                                this.fillEmpty(ds);
-                                // infer data
-                                this.computeActive(ds);
-                                this.computeConfirmedProjected(ds);
-                                this.computeContainmentScore(ds);
-                                this.computeTotals(ds);
+                    this.loadFromUrl(this.historyUSConfirmedUrl, (rawUSConfirmed) => {
+                        this.loadFromUrl(this.historyUSDeceasedUrl, (rawUSDeceased) => {
+                            this.loadFromUrl(this.liveCountriesUrl, (rawCountries) => {
+                                this.loadFromUrl(this.liveUSStatesUrl, (rawUSStates) => {
+                                    this.loadFromUrl(this.liveUrl, (rawLive) => {
+                                        // load history
+                                        this.parseHistory(ds, rawConfirmed.data, rawRecovered.data, rawDeceased.data, callback);
+                                        if(loadUScounties) {
+                                            this.parseHistoryUS(ds, rawUSConfirmed.data, rawUSDeceased.data);
+                                        }
+                                        // load live stats
+                                        ds.datasets.push(new Dataset(new Date().toLocaleDateString().replace("2020", "20")));
+                                        if (loadUScounties) {
+                                            this.parseLive(ds, rawLive.data);
+                                        }
+                                        this.parseLiveCountries(ds, rawCountries.data);
+                                        this.parseLiveUSStates(ds, rawUSStates.data);
+                                        this.fillEmpty(ds);
+                                        // infer data
+                                        this.computeActive(ds);
+                                        this.computeConfirmedProjected(ds);
+                                        this.computeContainmentScore(ds);
+                                        this.computeTotals(ds);
 
-                                callback(ds);
+                                        callback(ds);
+                                    });
+                                });
                             });
                         });
                     });
@@ -265,6 +275,11 @@ export class JHDatasourceProvider extends DatasourceProvider {
         this.parseTable(ds, "deceased", tableDeceased, false);
     };
 
+    parseHistoryUS = (ds, tableUSConfirmed, tableUSDeceased) => {
+        this.parseTable(ds, "confirmed", tableUSConfirmed, false, true);
+        this.parseTable(ds, "deceased", tableUSDeceased, false, true, 1);
+    };
+
     computeTotals = (ds) => {
         ds.datasets.map((dataset, datasetIndex) => {
             Object.keys(dataset.data).map((name, nameIndex) => {
@@ -397,7 +412,7 @@ export class JHDatasourceProvider extends DatasourceProvider {
         value["active"] = value["confirmed"] - value["recovered"] - value["deceased"];
     };
 
-    parseTable = (ds, attribute, table, parseHeader) => {
+    parseTable = (ds, attribute, table, parseHeader, parseRowUS=false, seriesOffset=0) => {
         let header = true;
         for(let data of table) {
             if(header) {
@@ -407,8 +422,28 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 header = false;
             }
             else {
-                this.parseRow(ds, attribute, data);
+                if(parseRowUS) {
+                    this.parseRowUS(ds, attribute, data, seriesOffset);
+                } else {
+                    this.parseRow(ds, attribute, data);
+                }
             }
+        }
+    };
+
+    parseRowUS = (ds, attribute, row, seriesOffset=0) => {
+        let name = row[10];
+        if(this.BLACKLIST_NAMES.includes(name)) {
+            return;
+        }
+        ds.locations[name] = [row[9], row[8]];
+        for(let i = 11 + seriesOffset; i < row.length; i++) {
+            let data = ds.datasets[i - 11 - seriesOffset].data;
+            if(!data[name]) {
+                data[name] = new Data();
+            }
+            let locationData = data[name];
+            this.parseBlock(name, row, i, attribute, locationData);
         }
     };
 

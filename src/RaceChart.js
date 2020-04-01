@@ -14,7 +14,6 @@ export default class RaceChart extends React.Component {
           this.props.names.map((name, index) => {
             let max = datasource.maxValue;
             let points = "";
-            let lastValue;
             Object.values(datasource.datasets).map((dataset, dateIndex) => {
               let value = dataset.data[name].absolute.current.confirmed;
               if(value > 0) {
@@ -23,9 +22,9 @@ export default class RaceChart extends React.Component {
                 } else {
                   value = Math.round((value / max) * svgHeight);
                 }
-                lastValue = value;
               }
               points += dateIndex * barWidth + "," + (svgHeight - value) + " ";
+              return true;
             });
             return (
               <g>

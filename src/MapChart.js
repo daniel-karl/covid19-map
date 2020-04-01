@@ -155,7 +155,7 @@ class MapChart extends Map {
                 that.setState({minimized_controls: true})
               }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
               <button hidden={!that.state.minimized_controls} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized_controls: false, testscale: this.state.testscale})
+                that.setState({minimized_controls: false})
               }}>settings
               </button>
               <div hidden={that.state.minimized_controls}>
@@ -635,7 +635,9 @@ class MapChart extends Map {
           </thead>
           <tbody>
             {
-              Object.keys(ds.data).sort((a, b) => {
+              Object.keys(ds.data).filter((value, index) => {
+                  return this.count(value, ",") < 2;
+              }).sort((a, b) => {
                 let mode = this.state.ppmmode ? "ppm" : "absolute";
                 let ca = a;
                 let cb = b;
@@ -897,7 +899,7 @@ class MapChart extends Map {
   };
 
   marker = (index, coordinates, color, size, data, name, type, opacity) => {
-    if(size > 0 && name !== "US, US" && name !== "Canada") {
+    if(size > 0 && name !== "Canada") {
       return (
         // bubble
         <CircleMarker
@@ -1192,8 +1194,8 @@ class MapChart extends Map {
     return value;
   };
 
-  sleep = async (msec) => {
-    return new Promise(resolve => setTimeout(resolve, msec));
+  count = (string, char) => {
+    return (string.length - string.replace(new RegExp(char,"g"), '').length) / char.length;
   };
 }
 

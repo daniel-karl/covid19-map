@@ -9,7 +9,7 @@ export default class BarChart extends React.Component {
     return (
       <svg width="272" heigth="145" role="img">
         {
-          datasource.datasets[datasource.datasets.length - 2].data[name].absolute.current.confirmed === -1 &&
+          datasource.datasets[datasource.datasets.length - 5].data[name].absolute.current.confirmed === -1 &&
           [
             <text
               className={"barChartNoData"}
@@ -47,6 +47,15 @@ export default class BarChart extends React.Component {
                 confirmedBarHeight = Math.round((dataset.data[name].absolute.current.confirmed / max) * svgHeight);
                 recoveredBarHeight = Math.round((dataset.data[name].absolute.current.recovered / max) * svgHeight);
                 deceasedBarHeight = Math.round((dataset.data[name].absolute.current.deceased / max) * svgHeight);
+            }
+            if(isNaN(confirmedBarHeight) || !isFinite(confirmedBarHeight)) {
+              confirmedBarHeight = 0;
+            }
+            if(isNaN(recoveredBarHeight) || !isFinite(recoveredBarHeight)) {
+              recoveredBarHeight = 0;
+            }
+            if(isNaN(deceasedBarHeight) || !isFinite(deceasedBarHeight)) {
+              deceasedBarHeight = 0;
             }
             return(
               <g>
