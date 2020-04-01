@@ -71,7 +71,7 @@ class MapChart extends Map {
       testscale: 0,
       dayOffset: 0,
       playmode: false,
-      mapstyle: "https://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      mapstyle: "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
       selectedData: ["projected", "confirmed", "recovered", "deceased"],
       datasource: null,
       leadership: "active",
@@ -155,7 +155,7 @@ class MapChart extends Map {
                 that.setState({minimized_controls: true})
               }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
               <button hidden={!that.state.minimized_controls} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized_controls: false})
+                that.setState({minimized_controls: false, testscale: this.state.testscale})
               }}>settings
               </button>
               <div hidden={that.state.minimized_controls}>
@@ -302,11 +302,9 @@ class MapChart extends Map {
                               as="select" onChange={(e) => {
                   that.setState({mapstyle: e.nativeEvent.target.value});
                 }}>
+                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">Light</option>
                   <option value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</option>
-                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">Light
-                  </option>
-                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark
-                  </option>
+                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark</option>
                 </Form.Control>
 
                 <div className={"credits"}>
