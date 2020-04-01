@@ -776,7 +776,7 @@ class MapChart extends Map {
             size = ds.data[name].absolute.growthLast7Days.active / this.state.datasource.maxValue;
             break;
         }
-        if(size > 0) {
+        if(size !== 0) {
             let pos = size >= 0;
             size = Math.abs(size);
             size = this.scaleLog(size);
@@ -809,7 +809,7 @@ class MapChart extends Map {
             break;
         }
         size = Math.abs(size);
-        if(size > 0) {
+        if(size !== 0) {
             size = this.scaleLog(size);
             size = this.scalePpm(size, pop);
             size = this.scaleLogAndPpm(size);
