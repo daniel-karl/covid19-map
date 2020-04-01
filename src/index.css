@@ -100,6 +100,7 @@ body {
   padding: 0px;
   z-index: 403;
   box-shadow: 0px 0px 5px #999;
+  text-align: center;
 }
 
 .controls.minimized .btn-collapse, .timeline.minimized .btn-collapse {
@@ -108,7 +109,7 @@ body {
   right: auto;
   bottom: auto;
   padding-top: auto !important;
-  margin-left: 20px;
+  margin-left: -30px;
   padding: 3px !important;
   width: auto !important;
   text-align: center;
@@ -131,7 +132,7 @@ body {
   padding-top: 5px;
   z-index: 401;
   box-shadow: 0px 0px 5px #999;
-  text-align: center;
+  text-align: left;
 }
 
 .showInMomentum {

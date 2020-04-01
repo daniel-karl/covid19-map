@@ -331,8 +331,8 @@ class MapChart extends Map {
               }}>timeline
               </button>
               <div hidden={that.state.minimized_timeline}>
-                  <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark"}>
-                    <b>{ds.date}</b>
+                  <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark ml-0 pl-0"}>
+                    <b>{new Date(ds.date).toLocaleDateString()}</b>
                   </button>
                   <div className={"race mb-1"}>
                     <RaceChart
@@ -756,10 +756,14 @@ class MapChart extends Map {
     return (
       this.state.momentum !== "none" &&
       Object.keys(ds.data).map((name, locationIndex) => {
+        let markers = [];
         if(ds.data[name].absolute.current.confirmed === -1) {
             return;
         }
         let pop = Population.ABSOLUTE[name];
+        let coordinates = this.state.datasource.locations[name];
+
+        // active cases
         let size;
         switch (this.state.momentum) {
           case "last1":
@@ -772,26 +776,56 @@ class MapChart extends Map {
             size = ds.data[name].absolute.growthLast7Days.active / this.state.datasource.maxValue;
             break;
         }
-        let pos = size >= 0;
-        size = Math.abs(size);
-        size = this.scaleLog(size);
-        size = this.scalePpm(size, pop);
-        size = this.scaleLogAndPpm(size);
-        let coordinates = this.state.datasource.locations[name];
-        if (size > 0 && name !== "US, US" && name !== "Canada") {
-          return (
-              <CircleMarker
-                  key={"change_" + locationIndex}
-                  style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
-                  center={[coordinates[1], coordinates[0]]}
-                  fillColor={pos ? "#FF0000" : "#00FF00"}
-                  radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
-                  opacity={0}
-                  fillOpacity={0.5}
-              />
-          );
+        if(size > 0) {
+            let pos = size >= 0;
+            size = Math.abs(size);
+            size = this.scaleLog(size);
+            size = this.scalePpm(size, pop);
+            size = this.scaleLogAndPpm(size);
+            markers.push(
+                <CircleMarker
+                    key={"change_" + locationIndex}
+                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
+                    center={[coordinates[1], coordinates[0]]}
+                    fillColor={pos ? "#FF0000" : "#00FF00"}
+                    radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
+                    opacity={0}
+                    fillOpacity={0.5}
+                />
+            );
         }
-        return "";
+
+
+        // deceased cases
+        switch (this.state.momentum) {
+          case "last1":
+            size = ds.data[name].absolute.growthLast1Day.deceased / this.state.datasource.maxValue;
+            break;
+          case "last3":
+            size = ds.data[name].absolute.growthLast3Days.deceased / this.state.datasource.maxValue;
+            break;
+          case "last7":
+            size = ds.data[name].absolute.growthLast7Days.deceased / this.state.datasource.maxValue;
+            break;
+        }
+        size = Math.abs(size);
+        if(size > 0) {
+            size = this.scaleLog(size);
+            size = this.scalePpm(size, pop);
+            size = this.scaleLogAndPpm(size);
+            markers.push(
+                <CircleMarker
+                    key={"change_" + locationIndex}
+                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
+                    center={[coordinates[1], coordinates[0]]}
+                    fillColor={"#000000"}
+                    radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
+                    opacity={0}
+                    fillOpacity={0.8}
+                />
+            );
+        }
+        return markers;
       })
     );
   };

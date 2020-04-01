@@ -213,13 +213,13 @@ export class JHDatasourceProvider extends DatasourceProvider {
             data.absolute.current.recovered= Number(row[8]);
             data.absolute.current.deceased = Number(row[7]);
 
-            data.absolute.growthLast1Day.confirmed = -1;
-            data.absolute.growthLast1Day.recovered = -1;
-            data.absolute.growthLast1Day.deceased = -1;
-
             data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
             data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
             data.ppm.current.deceased = this.ppm(name, data.absolute.current.deceased);
+
+            // data.absolute.growthLast1Day.confirmed = -1;
+            // data.absolute.growthLast1Day.recovered = -1;
+            // data.absolute.growthLast1Day.deceased = -1;
 
             data.ppm.growthLast1Day.confirmed = -1;
             data.ppm.growthLast1Day.recovered = -1;
