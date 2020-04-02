@@ -23,12 +23,15 @@ import {
   faStepBackward,
   faStepForward,
   faShieldAlt,
-  faExclamationTriangle
+  faExclamationTriangle,
+  faShieldVirus
 } from '@fortawesome/free-solid-svg-icons';
 
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
 
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import ReactBootstrapSlider from "react-bootstrap-slider";
 
@@ -77,6 +80,7 @@ class MapChart extends Map {
       leadership: "active",
       selectedLocations: ["Hubei, China", "Italy", "US", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Austria"],
       showUScounties: false,
+      showModal: true,
 
       lat: 0,
       lng: 0,
@@ -144,6 +148,23 @@ class MapChart extends Map {
       that.state.setTotalConfirmedProjected(ds.totalConfirmedProjected * that.state.testscale);
       return (
           <>
+            <Modal show={this.state.showModal} onHide={()=>{this.setState({showModal: false})}}>
+                <Modal.Header className={"bg-light"} closeButton>
+                  <Modal.Title><FontAwesomeIcon icon={faShieldVirus}/> Good to see you!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className={"text-justify"}>
+                    <p><i>covid19map.io</i> is a free <a target="_blank" href="https://github.com/daniel-karl/covid19-map/#open-covid19-map-%EF%B8%8F">open source</a> project.</p>
+                    <p>We provide a more detailed view on <a target="_blank" href="https://github.com/CSSEGISandData/COVID-19">Johns Hopkins University CSSE COVID-19 data repository</a>.</p>
+                    <p>If you experience any issues or have suggestions on how to improve this application <a target="_blank" href="https://github.com/daniel-karl/covid19-map/issues">please let us know</a>.</p>
+                    Stay healthy,<br />
+                    <a target="_blank" href="https://github.com/daniel-karl/covid19-map#contributors">The contributors</a>
+                </Modal.Body>
+                <Modal.Footer className={"bg-light"}>
+                  <Button variant="dark" onClick={()=>{this.setState({showModal: false})}}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             <div className={"small controls" + (that.state.minimized_controls ? " minimized" : "")}>
               {/*
                  <Form.Check inline className="small hideInJh" checked={that.state.momentum==="none" } label="Live situation" type={"radio"} name={"a"} id={`inline-radio-4`} onClick={() => {that.setState({momentum: "none"});}} />
@@ -658,9 +679,17 @@ class MapChart extends Map {
                   cb = (isNaN(cb)) ? 0 : cb;
                 }
                 else {
-                  ca = ds.data[a][mode].current[this.state.leadership];
+                  let dataMode = "current";
+                  if(this.state.momentum === "last1") {
+                      dataMode = "growthLast1Day";
+                  } else if (this.state.momentum === "last3") {
+                      dataMode = "growthLast3Days";
+                  } else if (this.state.momentum === "last7") {
+                      dataMode = "growthLast7Days";
+                  }
+                  ca = ds.data[a][mode][dataMode][this.state.leadership];
                   ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
-                  cb = ds.data[b][mode].current[this.state.leadership];
+                  cb = ds.data[b][mode][dataMode][this.state.leadership];
                   cb = (Population.ABSOLUTE[b]<ONE_M || isNaN(cb))  ? 0 : cb;
                 }
                 if(ca === null && cb === null) {
@@ -674,11 +703,19 @@ class MapChart extends Map {
                 }
               }).map((name, locationIndex) => {
                 if(name !== "Canada") {
-                  let confirmed = (this.state.ppmmode) ? ds.data[name].ppm.current.confirmed : ds.data[name].absolute.current.confirmed;
-                  let active = (this.state.ppmmode) ? ds.data[name].ppm.current.active : ds.data[name].absolute.current.active;
+                  let dataMode = "current";
+                  if(this.state.momentum === "last1") {
+                      dataMode = "growthLast1Day";
+                  } else if (this.state.momentum === "last3") {
+                      dataMode = "growthLast3Days";
+                  } else if (this.state.momentum === "last7") {
+                      dataMode = "growthLast7Days";
+                  }
+                  let confirmed = (this.state.ppmmode) ? ds.data[name].ppm[dataMode].confirmed : ds.data[name].absolute[dataMode].confirmed;
+                  let active = (this.state.ppmmode) ? ds.data[name].ppm[dataMode].active : ds.data[name].absolute[dataMode].active;
                   active = isNaN(active) ? "N/A" : active;
-                  let recovered = (this.state.ppmmode) ? ds.data[name].ppm.current.recovered : ds.data[name].absolute.current.recovered;
-                  let deceased = (this.state.ppmmode) ? ds.data[name].ppm.current.deceased : ds.data[name].absolute.current.deceased;
+                  let recovered = (this.state.ppmmode) ? ds.data[name].ppm[dataMode].recovered : ds.data[name].absolute[dataMode].recovered;
+                  let deceased = (this.state.ppmmode) ? ds.data[name].ppm[dataMode].deceased : ds.data[name].absolute[dataMode].deceased;
                   let containmentScore = ds.data[name].containmentScore;
                   if(containmentScore === null) {
                     containmentScore = "N/A";
@@ -698,16 +735,16 @@ class MapChart extends Map {
                         }}
                     >
                       <td className={"p-1 valign-top text-muted mono"} align={"center"}>{locationIndex + 1}</td>
-                      <td className={"p-1 valign-top stat bg-danger text-light"} align={"right"}>{Utils.rounded(active)}</td>
+                      <td className={"p-1 valign-top stat bg-danger text-light"} align={"right"}>{(this.state.momentum !== "none" && active >= 0 ? "+" : "") + Utils.rounded(active)}</td>
                       <td className={"p-1 valign-top country"}>{name}</td>
                       <td className={"p-1 valign-top"}>
                         <div className={"containmentScore containmentScore" + containmentScore}>
                           {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
                         </div>
                       </td>
-                      <td className={"p-1 valign-top stat text-danger"} align={"right"}>{Utils.rounded(confirmed)}</td>
-                      <td className={"p-1 valign-top stat text-success"} align={"right"}>{Utils.rounded(recovered)}</td>
-                      <td className={"p-1 valign-top stat text-dark"} align={"right"}>{Utils.rounded(deceased)}</td>
+                      <td className={"p-1 valign-top stat text-danger"} align={"right"}>{(this.state.momentum !== "none" && confirmed >= 0 ? "+" : "") + Utils.rounded(confirmed)}</td>
+                      <td className={"p-1 valign-top stat text-success"} align={"right"}>{(this.state.momentum !== "none" && recovered >= 0 ? "+" : "") + Utils.rounded(recovered)}</td>
+                      <td className={"p-1 valign-top stat text-dark"} align={"right"}>{(this.state.momentum !== "none" && deceased >= 0 ? "+" : "") + Utils.rounded(deceased)}</td>
                       <td className={"p-1 valign-top stat text-primary"} align={"right"}>{Utils.rounded(tested)}</td>
                     </tr>
                   )
@@ -784,6 +821,7 @@ class MapChart extends Map {
             size = this.scaleLogAndPpm(size);
             markers.push(
                 <CircleMarker
+                    className={"confirmed"}
                     key={"change_" + locationIndex}
                     style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
                     center={[coordinates[1], coordinates[0]]}
@@ -815,6 +853,7 @@ class MapChart extends Map {
             size = this.scaleLogAndPpm(size);
             markers.push(
                 <CircleMarker
+                    className={"deceased"}
                     key={"change_" + locationIndex}
                     style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
                     center={[coordinates[1], coordinates[0]]}

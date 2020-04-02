@@ -2,7 +2,7 @@
 export default class Utils {
 
     static rounded = num => {
-        if(isNaN(num) || num < 0) {
+        if(isNaN(num)) {
             return "-";
         }
         if (num > 1000000000) {
