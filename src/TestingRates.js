@@ -106,7 +106,7 @@ export const RATES = {
   "California, US":     31038,
   "Colorado, US":       18645,
   "Connecticut, US":    16600,
-  "DC":                 5070,              /* unkown */
+  "District of Columbia, US": 5070,
   "Delaware, US":       4383,
   "Florida, US":        67915,
   "Georgia, US":        20438,

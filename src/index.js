@@ -4,5 +4,15 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-slider/dist/css/bootstrap-slider.css"
 import App from './App';
+import RApp from './RApp';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+if(document.referrer.indexOf("worldhealthstats.online") !== -1) {
+    ReactDOM.render(<RApp />, document.getElementById('root'));
+}
+else {
+    ReactDOM.render(<App />, document.getElementById('root'));
+}
+
+
+
+
