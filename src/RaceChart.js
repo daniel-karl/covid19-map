@@ -4,12 +4,16 @@ export default class RaceChart extends React.Component {
   render() {
     let svgWidth = 200;
     let svgHeight = 145;
+    if(this.props.expanded) {
+      svgWidth = window.innerWidth - 40;
+      svgHeight = Math.round(window.innerHeight - 160);
+    }
     let datasource = this.props.datasource;
     let logmode = this.props.logmode;
     let dayOffset = this.props.dayOffset;
     let barWidth = svgWidth / (datasource.datasets.length);
     return (
-      <svg width={svgWidth} heigth={svgHeight} role="img">
+      <svg width={svgWidth} height={svgHeight} role="img">
         {
           this.props.names.sort((a, b) => {
               let val_a = datasource.datasets[datasource.datasets.length - 1].data[a].absolute.current.confirmed;

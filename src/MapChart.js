@@ -30,7 +30,9 @@ import {
   faStepForward,
   faShieldAlt,
   faExclamationTriangle,
-  faShieldVirus
+  faShieldVirus,
+  faWindowMaximize,
+  faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
@@ -86,6 +88,8 @@ class MapChart extends Map {
       selectedLocations: ["Hubei, China", "Italy", "US", "Spain", "Germany", "France", "Iran", "United Kingdom", "Switzerland", "Austria"],
       showUScounties: false,
       showModal: true,
+
+      expandRaceChart: false,
 
       lat: 0,
       lng: 0,
@@ -377,13 +381,45 @@ class MapChart extends Map {
                 </div>
               </div>
             </div>
-            <div className={"small timeline" + (that.state.minimized_timeline ? " minimized" : "")}>
-              <button hidden={that.state.minimized_timeline} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized_timeline: true})
-              }}>minimize <FontAwesomeIcon icon={faWindowMinimize}/></button>
-              <button hidden={!that.state.minimized_timeline} className={"btn-collapse"} onClick={() => {
-                that.setState({minimized_timeline: false})
-              }}>timeline
+            <div className={"small timeline" + (that.state.minimized_timeline ? " minimized" : "") + (this.state.expandRaceChart ? " expanded" : "")}>
+              <button
+                  hidden={that.state.minimized_timeline}
+                  className={"btn-collapse"}
+                  onClick={() => {
+                    that.setState({minimized_timeline: true, expandRaceChart: false})
+                  }}
+              >
+                  minimize <FontAwesomeIcon icon={faWindowMinimize}/>
+              </button>
+
+              <button
+                  hidden={that.state.minimized_timeline || that.state.expandRaceChart}
+                  className={"btn-collapse expand"}
+                  onClick={() => {
+                    that.setState({expandRaceChart: true})
+                  }}
+              >
+                  expand <FontAwesomeIcon icon={faWindowMaximize}/>
+              </button>
+
+              <button
+                  hidden={that.state.minimized_timeline || !that.state.expandRaceChart}
+                  className={"btn-collapse expand"}
+                  onClick={() => {
+                      that.setState({expandRaceChart: false})
+                  }}
+              >
+                  restore <FontAwesomeIcon icon={faWindowRestore}/>
+              </button>
+
+              <button
+                  hidden={!that.state.minimized_timeline}
+                  className={"btn-collapse"}
+                  onClick={() => {
+                      that.setState({minimized_timeline: false})
+                  }}
+              >
+                  timeline
               </button>
               <div hidden={that.state.minimized_timeline}>
                   <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark ml-0 pl-0"}>
@@ -395,6 +431,7 @@ class MapChart extends Map {
                       dayOffset={this.state.dayOffset}
                       logmode={this.state.logmode}
                       names={this.state.selectedLocations}
+                      expanded={this.state.expandRaceChart}
                     />
                   </div>
                   <button
