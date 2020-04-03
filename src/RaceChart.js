@@ -11,7 +11,16 @@ export default class RaceChart extends React.Component {
     return (
       <svg width={svgWidth} heigth={svgHeight} role="img">
         {
-          this.props.names.map((name, index) => {
+          this.props.names.sort((a, b) => {
+              let val_a = datasource.datasets[datasource.datasets.length - 1].data[a].absolute.current.confirmed;
+              let val_b = datasource.datasets[datasource.datasets.length - 1].data[b].absolute.current.confirmed;
+              if(val_a > val_b) {
+                return -1;
+              } else if(val_a < val_b) {
+                return 1;
+              }
+              return 0;
+            }).map((name, index) => {
             let max = datasource.maxValue;
             let points = "";
             Object.values(datasource.datasets).map((dataset, dateIndex) => {

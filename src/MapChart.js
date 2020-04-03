@@ -725,8 +725,10 @@ class MapChart extends Map {
                     <tr
                         className="locationSelect"
                         onClick={() =>{
-                            this.state.selectedLocations.pop();
-                            this.state.selectedLocations.push(name);
+                            if(!this.state.selectedLocations.includes(name)) {
+                                this.state.selectedLocations.pop();
+                                this.state.selectedLocations.push(name);
+                            }
                             this.setState({
                                 lng: this.state.datasource.locations[name][0],
                                 lat: this.state.datasource.locations[name][1],
