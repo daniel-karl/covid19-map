@@ -547,3 +547,16 @@ div.leaflet-pane.leaflet-tooltip-pane * {
 .markerTooltip, .deceasedLayer {
   z-index: 1002 !important;
 }
+
+.MuiInput-formControl {
+  padding-left: 6px;
+}
+
+.MuiSelect-select, .MuiListItem-button {
+  font-size: 14px !important;
+  height: 16px !important;
+}
+
+.MuiListItem-button {
+  height: 24px !important;
+}

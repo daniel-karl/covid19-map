@@ -4,6 +4,10 @@ import { Map, TileLayer, Tooltip as LTooltip,
 
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -187,17 +191,22 @@ class MapChart extends Map {
                     disableTouchListener={true}
                 >
                   <span className="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
-                </Tooltip>
-                <Form.Control value={that.state.momentum}
-                              style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm"
-                              as="select" onChange={(e) => {
-                  that.setState({momentum: e.nativeEvent.target.value, chart: "pie", testmode: false, testscale: 0});
-                }}>
-                  <option value="none">Cumulative</option>
-                  <option value="last1">Momentum (last 24 hours)</option>
-                  <option value="last3">Momentum (last 3 days)</option>
-                  <option value="last7">Momentum (last 7 days)</option>
-                </Form.Control>
+                </Tooltip><br />
+                <FormControl>
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="demo-simple-select-outlined"
+                    value={that.state.momentum}
+                    onChange={(e) => {
+                        that.setState({momentum: e.target.value, testmode: false, testscale: 0});
+                    }}
+                  >
+                    <MenuItem value={"none"}>Cumulative</MenuItem>
+                    <MenuItem value={"last1"}>Momentum (last 24 hours)</MenuItem>
+                    <MenuItem value={"last3"}>Momentum (last 3 days)</MenuItem>
+                    <MenuItem value={"last7"}>Momentum (last 7 days)</MenuItem>
+                  </Select>
+                </FormControl>
                 <Form.Check
                   inline
                   className="small mt-1"
@@ -321,15 +330,20 @@ class MapChart extends Map {
                 {/*<Form.Check inline title="Represent data as vertical bars. Hover bars on map to see more details." className="small hideInMomentum" checked={that.state.chart==="bar" } label="Bars" type={"radio"} name={"a"} id={`inline-radio-2`} onChange={() => {that.setState({chart: "bar"});}} disabled={that.state.momentum!=="none" ? true : false}/>*/}
                 {/*<Form.Check inline title="Represent data as horizontal pill. Hover pill on map to see more details." className="small hideInMomentum" checked={that.state.chart==="pill" } label="Pills" type={"radio"} name={"a"} id={`inline-radio-3`} onChange={() => {that.setState({chart: "pill"});}} disabled={that.state.momentum!=="none" ? true : false}/><br />*/}
                 <span className="small text-muted">Map style:</span><br/>
-                <Form.Control value={that.state.mapstyle}
-                              style={{lineHeight: "12px", padding: "0px", fontSize: "12px", height: "24px"}} size="sm"
-                              as="select" onChange={(e) => {
-                  that.setState({mapstyle: e.nativeEvent.target.value});
-                }}>
-                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">Light</option>
-                  <option value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</option>
-                  <option value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark</option>
-                </Form.Control>
+                <FormControl>
+                  <Select
+                    labelId="map-style-select-label"
+                    id="map-style-select"
+                    value={that.state.mapstyle}
+                    onChange={(e) => {
+                        that.setState({mapstyle: e.target.value});
+                    }}
+                  >
+                    <MenuItem value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">Light</MenuItem>
+                    <MenuItem value="https://{s}.tile.osm.org/{z}/{x}/{y}.png">Color</MenuItem>
+                    <MenuItem value="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">Dark</MenuItem>
+                  </Select>
+                </FormControl>
 
                 <div className={"credits"}>
                   <Badge><a target="_blank" className="text-secondary" rel="noopener noreferrer"
