@@ -831,7 +831,13 @@ class MapChart extends Map {
                     radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
                     opacity={0}
                     fillOpacity={0.5}
-                />
+                >
+                    <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
+                        {
+                            this.momentumTooltip(name, ds.data[name])
+                        }
+                    </LTooltip>
+                </CircleMarker>
             );
         }
 
@@ -863,7 +869,13 @@ class MapChart extends Map {
                     radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
                     opacity={0}
                     fillOpacity={0.8}
-                />
+                >
+                    <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
+                        {
+                            this.momentumTooltip(name, ds.data[name])
+                        }
+                    </LTooltip>
+                </CircleMarker>
             );
         }
         return markers;
@@ -967,6 +979,107 @@ class MapChart extends Map {
       );
     }
     return "";
+  };
+
+  momentumTooltip = (name, data) => {
+      let mode = this.state.ppmmode ? "ppm" : "absolute";
+      let unit = this.state.ppmmode ? "ppm" : "";
+      let dataMode;
+      switch(this.state.momentum) {
+          case "last1":
+              dataMode = "growthLast1Day";
+              break;
+          case "last3":
+              dataMode = "growthLast3Days";
+              break;
+          case "last7":
+              dataMode = "growthLast7Days";
+              break;
+      }
+      let confirmed = data[mode][dataMode].confirmed;
+      let recovered = data[mode][dataMode].recovered;
+      let deceased = data[mode][dataMode].deceased;
+      let active = data[mode][dataMode].active;
+      let containmentScore = data.containmentScore;
+      if(containmentScore === null) {
+        containmentScore = "N/A";
+      }
+      return (
+        <div>
+            <div>
+                <b>{name}</b><br/>
+                <FontAwesomeIcon icon={faUsers}/> {Utils.rounded(Population.ABSOLUTE[name])}
+                &nbsp;&middot;&nbsp;
+                <span className={"text-danger"}>
+                    <FontAwesomeIcon icon={faBiohazard}/>&nbsp;
+                    {<span>{(this.state.momentum !== "none" && confirmed >= 0 ? "+" : "") + Utils.rounded(confirmed)} {unit}</span>}
+                </span>
+                &nbsp;&middot;&nbsp;
+                <span className={"text-success"}>
+                    <FontAwesomeIcon icon={faHeartbeat}/>&nbsp;
+                    {<span>{(this.state.momentum !== "none" && recovered >= 0 ? "+" : "") + Utils.rounded(recovered)} {unit}</span>}
+                </span>
+                &nbsp;&middot;&nbsp;
+                <span className={"text-dark"}>
+                    <FontAwesomeIcon icon={faHeartBroken}/>&nbsp;
+                    {<span>{(this.state.momentum !== "none" && deceased >= 0 ? "+" : "") + Utils.rounded(deceased)} {unit}</span>}
+                </span>
+            </div>
+            <div>
+                <Badge variant={"danger"}>
+                <FontAwesomeIcon icon={faProcedures}/>&nbsp;
+                    {<span>{(this.state.momentum !== "none" && active >= 0 ? "+" : "") + Utils.rounded(active)} {unit}</span>}
+                </Badge>
+            </div>
+            <div className="stayAtHomeScoreLabel">
+            {
+              [
+                <span className="stayAtHomeAdvice">{this.stayAtHomeAdvice(data.absolute.current.active)}</span>,
+                <br/>
+              ]
+            }
+            <table>
+              <tbody>
+                <tr>
+                  <td valign={"top"}>
+                    <div className={`stayAtHomeScore stayAtHomeScore${containmentScore}`}>
+                      {containmentScore}{containmentScore !== "N/A" ? "/10" : ""}
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <i>Containment Score</i> reflects the spread of COVID19<br />
+                      in the region, based on weighted average growth<br />
+                      of confirmed cases over the past 1, 3 and 7 days.
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><FontAwesomeIcon icon={faExclamationTriangle}/> <b>Continue to follow the advice of the WHO<br/>and your local administration.</b></td>
+                </tr>
+                {
+                  this.state.ppmmode &&
+                  <tr>
+                    <td></td>
+                    <td><span className="text-muted">ppm: confirmed cases per one million people</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <BarChart
+            datasource={this.state.datasource}
+            name={name}
+            logmode={this.state.logmode}
+            dayOffset={this.state.dayOffset}
+          />
+          <br />
+          <div className={"text-center"}>
+              Plot shows data scaled <b>{this.state.logmode ? "logarithmically" : "linearly "}</b>  over time.<br /><i>It is currently insensitive to population size.</i>
+          </div>
+        </div>
+      );
   };
 
 
