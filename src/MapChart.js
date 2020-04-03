@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import { Map, TileLayer, Tooltip as LTooltip,
-    CircleMarker, LayerGroup } from "react-leaflet";
+    CircleMarker, Rectangle, LayerGroup } from "react-leaflet";
 
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -84,10 +84,9 @@ class MapChart extends Map {
 
       lat: 0,
       lng: 0,
-      zoom: 2
+      zoom: 2,
 
-      //chart: "pie",
-      //width: 2,
+      glyphs: "bubbles"
     };
 
     this.map = null;
@@ -310,9 +309,13 @@ class MapChart extends Map {
                     <br/>
                   ]
                 }
+                <span className="small text-muted">Glyphs:</span><br/>
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="bubbles" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-glyphs-bubbles`} onClick={() => {that.setState({glyphs: "bubbles"});}} />
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="candles" } label="Candles" type={"radio"} name={"a"} id={`inline-radio-glyphs-candles`} onClick={() => {that.setState({glyphs: "candles"});}} /><br />
+
                 <span className="small text-muted mr-2">Glyph size:</span><br/>
                 <ReactBootstrapSlider value={this.state.factor} change={e => {
-                  this.setState({factor: e.target.value, width: e.target.value / 10});
+                  this.setState({factor: e.target.value});
                 }} step={1} max={100} min={1}></ReactBootstrapSlider><br/>
                 {/*<Form.Check inline title="Represent data as bubbles. Hover bubbles on map to see more details." className="small" checked={that.state.chart==="pie" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-1`} onChange={() => {that.setState({chart: "pie"});}}/><br />*/}
                 {/*<Form.Check inline title="Represent data as vertical bars. Hover bars on map to see more details." className="small hideInMomentum" checked={that.state.chart==="bar" } label="Bars" type={"radio"} name={"a"} id={`inline-radio-2`} onChange={() => {that.setState({chart: "bar"});}} disabled={that.state.momentum!=="none" ? true : false}/>*/}
@@ -952,31 +955,62 @@ class MapChart extends Map {
   };
 
   marker = (index, coordinates, color, size, data, name, type, opacity) => {
+
+    let diffX = 0.5;
+    let diffY = isNaN(size) ? 0 : (size * this.state.factor < 0) ? 0 : size * this.state.factor;
+    let corner0 = [Number(coordinates[1]), Number(coordinates[0]) - diffX];
+    let corner1 = [Number(coordinates[1]) + diffY, Number(coordinates[0]) + diffX];
+
     if(size > 0 && name !== "Canada") {
-      return (
-        // bubble
-        <CircleMarker
-          className={type}
-          key={type + "_" + index}
-          style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
-          center={[coordinates[1], coordinates[0]]}
-          fillColor={color}
-          radius={size && size > 0 ? Math.sqrt(size) * this.state.factor : 0}
-          opacity={0}
-          fillOpacity={opacity}
-          onClick={() => {
-              this.state.selectedLocations.pop();
-              this.state.selectedLocations.push(name);
-              this.setState({});
-          }}
-        >
-          <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
-            {
-              this.tooltip(name, data)
-            }
-          </LTooltip>
-        </CircleMarker>
-      );
+        if (this.state.glyphs === "bubbles") {
+            return (
+                // bubble
+                <CircleMarker
+                    className={type}
+                    key={type + "_" + index}
+                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
+                    center={[coordinates[1], coordinates[0]]}
+                    fillColor={color}
+                    radius={size && size > 0 ? Math.sqrt(size) * this.state.factor : 0}
+                    opacity={0}
+                    fillOpacity={opacity}
+                    onClick={() => {
+                        this.state.selectedLocations.pop();
+                        this.state.selectedLocations.push(name);
+                        this.setState({});
+                    }}
+                >
+                    <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
+                        {
+                            this.tooltip(name, data)
+                        }
+                    </LTooltip>
+                </CircleMarker>
+            );
+        } else if (this.state.glyphs == "candles") {
+            return (
+                <Rectangle
+                    className={type}
+                    key={type + "_" + index}
+                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
+                    fillColor={color}
+                    bounds={[corner0, corner1]}
+                    opacity={0}
+                    fillOpacity={opacity}
+                    onClick={() => {
+                        this.state.selectedLocations.pop();
+                        this.state.selectedLocations.push(name);
+                        this.setState({});
+                    }}
+                >
+                    <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
+                        {
+                            this.tooltip(name, data)
+                        }
+                    </LTooltip>
+                </Rectangle>
+            );
+        }
     }
     return "";
   };
