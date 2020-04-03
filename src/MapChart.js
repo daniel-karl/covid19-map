@@ -39,7 +39,6 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import ReactBootstrapSlider from "react-bootstrap-slider";
 
 import BarChart from "./BarChart";
 import {JHDatasourceProvider} from "./datasource/JHDatasourceProvider";
@@ -318,6 +317,7 @@ class MapChart extends Map {
                           {value: 1, label: <span className={"text-muted small"}>global average</span>}
                           ]}
                       onChange={(e,value) => {
+                          this.state.logmode = false;
                           this.state.testscale = value;
                           this.state.testmode = true;
                           this.render();
