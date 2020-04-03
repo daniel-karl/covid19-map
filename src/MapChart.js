@@ -5,6 +5,8 @@ import { Map, TileLayer, Tooltip as LTooltip,
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import Slider from '@material-ui/core/Slider';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -207,32 +209,32 @@ class MapChart extends Map {
                     <MenuItem value={"last7"}>Momentum (last 7 days)</MenuItem>
                   </Select>
                 </FormControl>
-                <Form.Check
-                  inline
-                  className="small mt-1"
-                  checked={this.state.showUScounties}
+                <FormControlLabel
+                  control={
+                      <Checkbox
+                          color="primary"
+                          checked={this.state.showUScounties}
+                          onChange={() => {
+                              new JHDatasourceProvider().getDatasource(!that.state.showUScounties, (datasource) => {
+                                  that.setState({
+                                      showUScounties: !that.state.showUScounties,
+                                      datasource: datasource
+                                  });
+                              });
+                          }}
+                      />
+                  }
                   label={
-                    <Tooltip
+                      <Tooltip
                       title="Show live US county data (slows perfomance of the application)."
                       small={"true"}
                       arrow
                       disableTouchListener={true}
                     >
-                      <span>Incl. US counties (slows speed)</span>
+                      <span>Include US counties<br />(reduces speed)</span>
                     </Tooltip>
                   }
-                  type={"checkbox"}
-                  name={"a"}
-                  id={`uscounties-checkbox`}
-                  onChange={() => {
-                    new JHDatasourceProvider().getDatasource(!that.state.showUScounties,  (datasource) => {
-                      that.setState({
-                          showUScounties: !that.state.showUScounties,
-                          datasource: datasource
-                      });
-                    });
-                  }}
-                /><br />
+                />
                 <span className="small text-muted mr-2">Normalization:</span>
                 <Tooltip
                     title="Scale the size of the glyphs on the map according to different criteria."
@@ -243,52 +245,55 @@ class MapChart extends Map {
                   <span className="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip>
                 <br/>
-                <Form.Check
-                    inline
-                    className="small"
-                    checked={that.state.logmode}
-                    label={
+                <FormControlLabel
+                  className={"higher"}
+                  control={
+                      <Checkbox
+                          color="primary"
+                          checked={that.state.logmode}
+                          onChange={() => {
+                              that.setState({
+                                  logmode: !that.state.logmode
+                              });
+                          }}
+                      />
+                  }
+                  label={
                       <Tooltip
-                          title="Scales the size of the glyphs on the map logarithmically."
-                          small={"true"}
-                          arrow
-                          disableTouchListener={true}
-                      >
-                        <span>Log</span>
-                      </Tooltip>
-                    }
-                    type={"checkbox"}
-                    name={"a"}
-                    id={`inline-checkbox-2`}
-                    onChange={() => {
-                      that.setState({
-                        logmode: !that.state.logmode
-                      });
-                    }}
+                      title="Scales the size of the glyphs on the map logarithmically."
+                      small={"true"}
+                      arrow
+                      disableTouchListener={true}
+                    >
+                      <span>Log</span>
+                    </Tooltip>
+                  }
                 />
-                <Form.Check
-                    inline
-                    className="small"
-                    checked={that.state.ppmmode}
-                    label={
+                <FormControlLabel
+                  className={"higher"}
+                  control={
+                      <Checkbox
+                          color="primary"
+                          checked={that.state.ppmmode}
+                          onChange={() => {
+                              that.setState({
+                                  ppmmode: !that.state.ppmmode
+                              });
+                          }}
+                      />
+                  }
+                  label={
                       <Tooltip
-                          title="Scales the size of the glyphs on the map according to the number of people in the location."
-                          small={"true"}
-                          arrow
-                          disableTouchListener={true}
-                      >
-                        <span>Population</span>
-                      </Tooltip>
-                    }
-                    type={"checkbox"}
-                    name={"a"}
-                    id={`inline-checkbox-3`}
-                    onChange={() => {
-                      that.setState({
-                        ppmmode: !that.state.ppmmode
-                      });
-                    }}
-                /><br/>
+                      title="Scales the size of the glyphs on the map according to the number of people in the location."
+                      small={"true"}
+                      arrow
+                      disableTouchListener={true}
+                    >
+                      <span>Population</span>
+                    </Tooltip>
+                  }
+                />
+                <br/>
                 {
                   that.state.momentum === "none" && !that.state.playmode &&
                   [
@@ -310,7 +315,7 @@ class MapChart extends Map {
                       max={3}
                       marks={[
                           {value: 0, label: <span className={"text-muted small"}>off</span>},
-                          {value: 1, label: <span className={"text-muted small"}>global avg.</span>}
+                          {value: 1, label: <span className={"text-muted small"}>global average</span>}
                           ]}
                       onChange={(e,value) => {
                           this.state.testscale = value;

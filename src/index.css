@@ -43,7 +43,7 @@ body {
   box-shadow: 0px 0px 5px #999;
   overflow: scroll;
   max-height: calc(66% - 20px);
-  width: 260px;
+  width: 240px;
 }
 
 @media only screen and (max-height: 500px) {
@@ -559,4 +559,20 @@ div.leaflet-pane.leaflet-tooltip-pane * {
 
 .MuiListItem-button {
   height: 24px !important;
+}
+
+.MuiFormControlLabel-label {
+  font-size: 12px !important;
+}
+
+.MuiSvgIcon-root {
+  width: 20px !important;
+}
+
+.MuiFormControlLabel-root {
+  margin-bottom: 0px;
+}
+
+.MuiFormControlLabel-root.higher {
+  margin-top: -12px !important;
 }
