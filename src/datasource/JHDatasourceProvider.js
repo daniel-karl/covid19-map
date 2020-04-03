@@ -8,7 +8,7 @@ import * as Testing from "../TestingRates";
 
 export class JHDatasourceProvider extends DatasourceProvider {
 
-    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "", "Recovered, US", "Diamond Princess", "Diamond Princess, US", "Diamond Princess, Canada"];
+    BLACKLIST_NAMES = ["Recovered, Canada", "MS Zaandam", "", "Recovered, US", "Diamond Princess", "Diamond Princess, US", "Diamond Princess, Canada", "Grand Princess, US"];
 
     constructor() {
         super("Johns Hopkins CSSE COVID-19");
