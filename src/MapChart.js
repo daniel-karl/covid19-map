@@ -688,9 +688,9 @@ class MapChart extends Map {
                       dataMode = "growthLast7Days";
                   }
                   ca = ds.data[a][mode][dataMode][this.state.leadership];
-                  ca = (Population.ABSOLUTE[a]<ONE_M || isNaN(ca)) ? 0 : ca;
+                  ca = isNaN(ca) ? 0 : ca;
                   cb = ds.data[b][mode][dataMode][this.state.leadership];
-                  cb = (Population.ABSOLUTE[b]<ONE_M || isNaN(cb))  ? 0 : cb;
+                  cb = isNaN(cb)  ? 0 : cb;
                 }
                 if(ca === null && cb === null) {
                   return 0;
