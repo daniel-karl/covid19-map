@@ -5,7 +5,7 @@ import { Map, TileLayer, Tooltip as LTooltip,
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
+import Slider from '@material-ui/core/Slider';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -302,19 +302,22 @@ class MapChart extends Map {
                       <span className={"test"}><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                     </Tooltip>,
                     <br/>,
-                    <ReactBootstrapSlider
-                      ticks={[0, 1, 2, 3]}
-                      ticks_labels={["off", "global avg.", "x2", "x3"]}
+                    <Slider
                       value={this.state.testscale}
-                      change={e => {
-                        this.state.testscale = e.target.value;
-                        this.state.testmode = true;
-                        this.render();
-                      }}
+                      defaultValue={this.state.testscale}
                       step={0.1}
-                      max={3}
                       min={0}
-                    ></ReactBootstrapSlider>,
+                      max={3}
+                      marks={[
+                          {value: 0, label: <span className={"text-muted small"}>off</span>},
+                          {value: 1, label: <span className={"text-muted small"}>global avg.</span>}
+                          ]}
+                      onChange={(e,value) => {
+                          this.state.testscale = value;
+                          this.state.testmode = true;
+                          this.render();
+                      }}
+                    />,
                     <br/>
                   ]
                 }
@@ -323,9 +326,20 @@ class MapChart extends Map {
                 <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="candles" } label="Candles" type={"radio"} name={"a"} id={`inline-radio-glyphs-candles`} onClick={() => {that.setState({glyphs: "candles"});}} /><br />
 
                 <span className="small text-muted mr-2">Glyph size:</span><br/>
-                <ReactBootstrapSlider value={this.state.factor} change={e => {
+                <Slider
+                    value={this.state.factor}
+                    defaultValue={this.state.factor}
+                    step={1}
+                    min={1}
+                    max={100}
+                    valueLabelDisplay="auto"
+                    onChange={(e,value) => {
+                        this.setState({factor: value});
+                    }}
+                /><br />
+                  {/*<ReactBootstrapSlider value={this.state.factor} change={e => {
                   this.setState({factor: e.target.value});
-                }} step={1} max={100} min={1}></ReactBootstrapSlider><br/>
+                }} step={1} max={100} min={1}></ReactBootstrapSlider><br/>*/}
                 {/*<Form.Check inline title="Represent data as bubbles. Hover bubbles on map to see more details." className="small" checked={that.state.chart==="pie" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-1`} onChange={() => {that.setState({chart: "pie"});}}/><br />*/}
                 {/*<Form.Check inline title="Represent data as vertical bars. Hover bars on map to see more details." className="small hideInMomentum" checked={that.state.chart==="bar" } label="Bars" type={"radio"} name={"a"} id={`inline-radio-2`} onChange={() => {that.setState({chart: "bar"});}} disabled={that.state.momentum!=="none" ? true : false}/>*/}
                 {/*<Form.Check inline title="Represent data as horizontal pill. Hover pill on map to see more details." className="small hideInMomentum" checked={that.state.chart==="pill" } label="Pills" type={"radio"} name={"a"} id={`inline-radio-3`} onChange={() => {that.setState({chart: "pill"});}} disabled={that.state.momentum!=="none" ? true : false}/><br />*/}
