@@ -9,6 +9,9 @@ import RApp from './RApp';
 if(document.referrer.indexOf("worldhealthstats.online") !== -1) {
     ReactDOM.render(<RApp />, document.getElementById('root'));
 }
+else if (document.referrer.indexOf("globe.pthapp.co.in") !== -1) {
+    ReactDOM.render(<RApp />, document.getElementById('root'));
+}
 else {
     ReactDOM.render(<App />, document.getElementById('root'));
 }
