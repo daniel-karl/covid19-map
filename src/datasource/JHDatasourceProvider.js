@@ -210,21 +210,21 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 continue
             }
             let name = "";
-            if(row[1]) {
-                name += row[1] + ", ";
+            if(row[0]) {
+                name += row[0] + ", ";
             }
-            if(row[2]) {
-                name += row[2];
+            if(row[1]) {
+                name += row[1];
             }
             if(this.BLACKLIST_NAMES.includes(name)) {
                 continue;
             }
-            ds.locations[name] = [row[5], row[4]];
+            ds.locations[name] = [row[4], row[3]];
 
             let data = new Data();
-            data.absolute.current.confirmed = Number(row[6]);
-            data.absolute.current.recovered= Number(row[8]);
-            data.absolute.current.deceased = Number(row[7]);
+            data.absolute.current.confirmed = Number(row[5]);
+            data.absolute.current.recovered= Number(row[7]);
+            data.absolute.current.deceased = Number(row[6]);
 
             data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
             data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
