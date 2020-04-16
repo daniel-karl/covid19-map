@@ -79,25 +79,16 @@ export class JHDatasourceProvider extends DatasourceProvider {
             if(row.length < 3) {
                 continue
             }
-            let name = "";
-            if(row[1]) {
-                name += row[1] + ", ";
-            }
-            if(row[2]) {
-                name += row[2] + ", ";
-            }
-            if(row[3]) {
-                name += row[3];
-            }
+            let name = row[11];
             if(this.BLACKLIST_NAMES.includes(name)) {
                 continue;
             }
-            ds.locations[name] = [row[6], row[5]];
+            ds.locations[name] = [row[4], row[3]];
 
             let data = new Data();
-            data.absolute.current.confirmed = Number(row[7]);
-            data.absolute.current.recovered= Number(row[9]);
-            data.absolute.current.deceased = Number(row[8]);
+            data.absolute.current.confirmed = Number(row[5]);
+            data.absolute.current.recovered= Number(row[7]);
+            data.absolute.current.deceased = Number(row[6]);
 
             data.ppm.current.confirmed = this.ppm(name, data.absolute.current.confirmed);
             data.ppm.current.recovered = this.ppm(name, data.absolute.current.recovered);
