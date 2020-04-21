@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import { Map, TileLayer, Tooltip as LTooltip,
-    CircleMarker, Rectangle, LayerGroup } from "react-leaflet";
+    Polygon, CircleMarker, Rectangle, LayerGroup } from "react-leaflet";
 
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -332,7 +332,8 @@ class MapChart extends Map {
                 }
                 <span className="small text-muted">Glyphs:</span><br/>
                 <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="bubbles" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-glyphs-bubbles`} onClick={() => {that.setState({glyphs: "bubbles"});}} />
-                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="candles" } label="Candles" type={"radio"} name={"a"} id={`inline-radio-glyphs-candles`} onClick={() => {that.setState({glyphs: "candles"});}} /><br />
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="candles" } label="Candles" type={"radio"} name={"a"} id={`inline-radio-glyphs-candles`} onClick={() => {that.setState({glyphs: "candles"});}} />
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="mountains" } label="Mountains" type={"radio"} name={"a"} id={`inline-radio-glyphs-mountains`} onClick={() => {that.setState({glyphs: "mountains"});}} /><br />
 
                 <span className="small text-muted mr-2">Glyph size:</span><br/>
                 <Slider
@@ -1031,6 +1032,13 @@ class MapChart extends Map {
     let corner0 = [Number(coordinates[1]), Number(coordinates[0]) - diffX];
     let corner1 = [Number(coordinates[1]) + diffY, Number(coordinates[0]) + diffX];
 
+    let latLngs = [
+        [ Number(coordinates[1]), Number(coordinates[0]) - diffX ],
+        [ Number(coordinates[1]) + diffY / 1.5, Number(coordinates[0])],
+        [ Number(coordinates[1]), Number(coordinates[0]) + diffX ]
+    ];
+    console.log(latLngs);
+
     if(size > 0 && name !== "Canada") {
         if (this.state.glyphs === "bubbles") {
             return (
@@ -1038,7 +1046,6 @@ class MapChart extends Map {
                 <CircleMarker
                     className={type}
                     key={type + "_" + index}
-                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
                     center={[coordinates[1], coordinates[0]]}
                     fillColor={color}
                     radius={size && size > 0 ? Math.sqrt(size) * this.state.factor : 0}
@@ -1062,7 +1069,6 @@ class MapChart extends Map {
                 <Rectangle
                     className={type}
                     key={type + "_" + index}
-                    style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
                     fillColor={color}
                     bounds={[corner0, corner1]}
                     opacity={0}
@@ -1079,6 +1085,29 @@ class MapChart extends Map {
                         }
                     </LTooltip>
                 </Rectangle>
+            );
+        } else if (this.state.glyphs == "mountains") {
+
+            return (
+                <Polygon
+                    className={type}
+                    key={type + "_" + index}
+                    fillColor={color}
+                    opacity={0}
+                    positions={latLngs}
+                    fillOpacity={opacity}
+                    onClick={() => {
+                        this.state.selectedLocations.pop();
+                        this.state.selectedLocations.push(name);
+                        this.setState({});
+                    }}
+                >
+                    <LTooltip direction="bottom" offset={[0, 20]} opacity={1} className={"markerTooltip"}>
+                        {
+                            this.tooltip(name, data)
+                        }
+                    </LTooltip>
+                </Polygon>
             );
         }
     }
