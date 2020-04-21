@@ -10,7 +10,8 @@ export class JHDatasourceProvider extends DatasourceProvider {
 
     BLACKLIST_NAMES = [
         "Recovered, Canada", "MS Zaandam", "", "Recovered, US", "Diamond Princess", "Diamond Princess, US",
-        "Diamond Princess, Canada", "Grand Princess, US", "Grand Princess, Canada"
+        "Diamond Princess, Canada", "Grand Princess, US", "Grand Princess, Canada", "Veteran Hospitals, US",
+        "Federal Bureau of Prisons, US", "US Military, US"
     ];
 
     constructor() {

@@ -91,11 +91,11 @@ class MapChart extends Map {
 
       expandRaceChart: false,
 
-      lat: 0,
-      lng: 0,
-      zoom: 2,
+      lat: 50,
+      lng: 10,
+      zoom: 4,
 
-      glyphs: "bubbles"
+      glyphs: "mountains"
     };
 
     this.map = null;
@@ -331,9 +331,9 @@ class MapChart extends Map {
                   ]
                 }
                 <span className="small text-muted">Glyphs:</span><br/>
-                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="bubbles" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-glyphs-bubbles`} onClick={() => {that.setState({glyphs: "bubbles"});}} />
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="mountains" } label="Mountains" type={"radio"} name={"a"} id={`inline-radio-glyphs-mountains`} onClick={() => {that.setState({glyphs: "mountains"});}} />
                 <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="candles" } label="Candles" type={"radio"} name={"a"} id={`inline-radio-glyphs-candles`} onClick={() => {that.setState({glyphs: "candles"});}} />
-                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="mountains" } label="Mountains" type={"radio"} name={"a"} id={`inline-radio-glyphs-mountains`} onClick={() => {that.setState({glyphs: "mountains"});}} /><br />
+                <Form.Check inline className="small hideInJh" checked={that.state.glyphs==="bubbles" } label="Bubbles" type={"radio"} name={"a"} id={`inline-radio-glyphs-bubbles`} onClick={() => {that.setState({glyphs: "bubbles"});}} /><br />
 
                 <span className="small text-muted mr-2">Glyph size:</span><br/>
                 <Slider
@@ -833,10 +833,14 @@ class MapChart extends Map {
     );
   };
 
+  handleZoom = () => {
+    this.setState({zoom: this.map.leafletElement.getZoom()});
+  };
+
   leafletMap = (ds) => {
     const position = [this.state.lat, this.state.lng];
     return (
-      <Map ref={(ref) => { this.map = ref}} center={position} zoom={this.state.zoom} zoomControl={false}>
+      <Map ref={(ref) => { this.map = ref}} center={position} zoom={this.state.zoom} zoomControl={false} onZoomEnd={this.handleZoom}>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url={this.state.mapstyle}
@@ -901,7 +905,7 @@ class MapChart extends Map {
                     key={"change_" + locationIndex}
                     style={this.state.chart === "pie" ? {display: "block"} : {display: "none"}}
                     center={[coordinates[1], coordinates[0]]}
-                    fillColor={pos ? "#FF0000" : "#00FF00"}
+                    fillColor={pos ? "#dc3545" : "#28a745"}
                     radius={isNaN(size) ? 0 : Math.sqrt(size) * this.state.factor}
                     opacity={0}
                     fillOpacity={0.5}
@@ -980,7 +984,7 @@ class MapChart extends Map {
           let value = ds.data[name].absolute.current.confirmedProjected / that.state.datasource.maxValue * that.state.testscale;
           // let value = ds.data[name].ppm.current.confirmedProjected;
           let size = this.scale(value, Population.ABSOLUTE[name]);
-          return this.marker(locationIndex, that.state.datasource.locations[name], "#00F", size, ds.data[name], name, "projected", 0.5);
+          return this.marker(locationIndex, that.state.datasource.locations[name], "#007bff", size, ds.data[name], name, "projected", 0.5, -1);
         })
     )
   };
@@ -993,7 +997,7 @@ class MapChart extends Map {
           let value = ds.data[name].absolute.current.confirmed / that.state.datasource.maxValue;
           // let value = ds.data[name].ppm.current.confirmed;
           let size = this.scale(value, Population.ABSOLUTE[name]);
-          return this.marker(locationIndex, that.state.datasource.locations[name], "#F00", size, ds.data[name], name, "confirmed", 0.5);
+          return this.marker(locationIndex, that.state.datasource.locations[name], "#dc3545", size, ds.data[name], name, "confirmed", 0.8, -1);
         })
     )
   };
@@ -1007,7 +1011,7 @@ class MapChart extends Map {
           value += ds.data[name].absolute.current.deceased / that.state.datasource.maxValue;
           // let value = ds.data[name].ppm.current.recovered;
           let size = this.scale(value, Population.ABSOLUTE[name]);
-          return this.marker(locationIndex, that.state.datasource.locations[name], "#0F0", size, ds.data[name], name, "recovered", 0.5);
+          return this.marker(locationIndex, that.state.datasource.locations[name], "#28a745", size, ds.data[name], name, "recovered", 0.8, 0);
         })
     )
   };
@@ -1020,24 +1024,35 @@ class MapChart extends Map {
           let value = ds.data[name].absolute.current.deceased / that.state.datasource.maxValue;
           // let value = ds.data[name].ppm.current.deceased;
           let size = this.scale(value, Population.ABSOLUTE[name]);
-          return this.marker(locationIndex, that.state.datasource.locations[name], "#000", size, ds.data[name], name, "deceased", 0.8);
+          return this.marker(locationIndex, that.state.datasource.locations[name], "#212529", size, ds.data[name], name, "deceased", 0.9, +1);
         })
     )
   };
 
-  marker = (index, coordinates, color, size, data, name, type, opacity) => {
+  marker = (index, coordinates, color, size, data, name, type, opacity, offset) => {
 
-    let diffX = 0.5;
+    let diffX = 0.5 * Math.min(5 ** 2 / this.state.zoom ** 2, 1);
     let diffY = isNaN(size) ? 0 : (size * this.state.factor < 0) ? 0 : size * this.state.factor;
     let corner0 = [Number(coordinates[1]), Number(coordinates[0]) - diffX];
-    let corner1 = [Number(coordinates[1]) + diffY, Number(coordinates[0]) + diffX];
+    let corner1 = [Number(coordinates[1]) + diffY * Math.min(5 / this.state.zoom, 10), Number(coordinates[0]) + diffX];
 
     let latLngs = [
         [ Number(coordinates[1]), Number(coordinates[0]) - diffX ],
-        [ Number(coordinates[1]) + diffY / 1.5, Number(coordinates[0])],
+        [ Number(coordinates[1]) + diffY * Math.min(5 / this.state.zoom, 10), Number(coordinates[0])],
         [ Number(coordinates[1]), Number(coordinates[0]) + diffX ]
     ];
-    console.log(latLngs);
+
+    if (this.state.glyphs === "mountains") {
+        if(offset < 0) {
+            latLngs[0][1] -= diffX * 2;
+            latLngs[1][1] -= diffX * 2;
+            latLngs[2][1] -= diffX * 2;
+        } else if (offset > 0) {
+            latLngs[0][1] += diffX * 2;
+            latLngs[1][1] += diffX * 2;
+            latLngs[2][1] += diffX * 2;
+        }
+    }
 
     if(size > 0 && name !== "Canada") {
         if (this.state.glyphs === "bubbles") {
