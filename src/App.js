@@ -59,6 +59,10 @@ function App() {
                 setTotalRecovered={setTotalRecovered}
                 setTotalDeceased={setTotalDeceased}
                 setTotalConfirmedProjected={setTotalConfirmedProjected}
+                totalConfirmedProjected={totalConfirmedProjected}
+                totalConfirmed={totalConfirmed}
+                totalDeceased={totalDeceased}
+                totalRecovered={totalRecovered}
             />
           </Col>
         </Row>

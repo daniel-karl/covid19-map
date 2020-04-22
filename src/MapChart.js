@@ -196,7 +196,7 @@ class MapChart extends Map {
                         differences in the data, whereas logarithmic scaling allows for comparison on the order of magnitude, i.e. the <i>length</i> of values.<br />
                         <br />
                         <b>Population:</b> Toggle whether to scale the data according to the number of people in a location.<br />
-                        This also changes all numbers in the application to parts per million (<b>PPM</b>).
+                        This also changes all numbers displayed in the application to parts per million (<b>PPM</b>).
                     </p>
                     <p>
                         <h5>"What if?"-testing rates</h5>
@@ -630,6 +630,32 @@ class MapChart extends Map {
                   <button disabled style={{opacity: 1, pointerEvents: "none"}} className={"btn btn-sm text-dark ml-0 pl-0"}>
                     <b>{new Date(ds.date).toLocaleDateString()}</b>
                   </button>
+                  <div className="totals">
+                    {
+                        this.props.totalConfirmedProjected * this.state.testscale > this.props.totalConfirmed &&
+                        <span className={"text-primary mr-2"} style={{fontSize: "27px", fontStyle: "italic", fontWeight: "bold"}}>
+                            <FontAwesomeIcon icon={faBiohazard} className={"mr-1"}/>
+                            {Utils.rounded(this.props.totalConfirmedProjected)}
+                        </span>
+                    }
+                    {
+                        this.props.totalConfirmedProjected * this.state.testscale <= this.props.totalConfirmed &&
+                        <span className={"small text-danger mr-2"} style={{fontSize: "27px", fontStyle: "italic", fontWeight: "bold"}}>
+                            <FontAwesomeIcon icon={faBiohazard} className={"mr-1"}/>
+                            {Utils.rounded(this.props.totalConfirmed)}
+                        </span>
+                    }
+                    <br />
+                    <span className={"small text-success mr-2"} style={{fontSize: "27px", fontStyle: "italic", fontWeight: "bold"}}>
+                        <FontAwesomeIcon icon={faHeartbeat} className={"mr-1"}/>
+                        {Utils.rounded(this.props.totalRecovered)}
+                    </span>
+                    <br />
+                    <span className={"small mr-2"} style={{fontSize: "27px", fontStyle: "italic", fontWeight: "bold"}}>
+                        <FontAwesomeIcon icon={faHeartBroken} className={"mr-1"}/>
+                        {Utils.rounded(this.props.totalDeceased)}
+                    </span>
+                  </div>
                   <div className={"race mb-1"}>
                     <RaceChart
                       datasource={this.state.datasource}
