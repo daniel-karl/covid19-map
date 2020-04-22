@@ -86,6 +86,10 @@ body {
     right: 10px !important;
     bottom: auto !important;
   }
+
+  .totals {
+    display: none !important;
+  }
 }
 
 .navbar {
