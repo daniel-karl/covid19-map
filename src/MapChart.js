@@ -163,7 +163,6 @@ class MapChart extends Map {
                 <Modal.Body className={"text-justify"}>
                     <p><i>covid19map.io</i> is a free <a target="_blank" href="https://github.com/daniel-karl/covid19-map/#open-covid19-map-%EF%B8%8F">open source</a> project.</p>
                     <p>We provide a more detailed view on <a target="_blank" href="https://github.com/CSSEGISandData/COVID-19">Johns Hopkins University CSSE COVID-19 data repository</a>.</p>
-                    <p>If you experience any issues or have suggestions on how to improve this application <a target="_blank" href="https://github.com/daniel-karl/covid19-map/issues">please let us know</a>.</p>
 
                     <h3>Tutorial</h3>
                     <p>
@@ -221,6 +220,154 @@ class MapChart extends Map {
                             </tr>
                         </table>
                     </p>
+                    <p>
+                        <h5>Replay mode</h5>
+                        <table cellPadding={3}>
+                            <tr>
+                                <td valign={"top"}>
+                                    Navigate back and forth in time to explore the history of COVID-19. You can also
+                                    hit the green <span className="text-success">Play</span> button to start the interactive animation.
+                                </td>
+                                <td>
+                                    <img src={"theatre.png"} />
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
+                    <p>
+                        <h5>Containment Scores</h5>
+                        <table>
+                            <tr>
+                                <td colSpan={12}>
+                                    Based on weighted average growth of confirmed cases over the past 1, 3 and 7 days we compute
+                                    Containment Scores that reflect the spread of COVID19 in different locations.<br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={12}>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore0"} style={{float: "left", fontSize: "10px"}}>
+                                      0/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore1"} style={{float: "left", fontSize: "10px"}}>
+                                      1/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore2"} style={{float: "left", fontSize: "10px"}}>
+                                      2/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore3"} style={{float: "left", fontSize: "10px"}}>
+                                      3/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore4"} style={{float: "left", fontSize: "10px"}}>
+                                      4/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore5"} style={{float: "left", fontSize: "10px"}}>
+                                      5/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore6"} style={{float: "left", fontSize: "10px"}}>
+                                      6/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore7"} style={{float: "left", fontSize: "10px"}}>
+                                      7/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore8"} style={{float: "left", fontSize: "10px"}}>
+                                      8/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore9"} style={{float: "left", fontSize: "10px"}}>
+                                      9/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore stayAtHomeScore10"} style={{float: "left", fontSize: "10px"}}>
+                                      10/10
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={"stayAtHomeScore"} style={{float: "left", fontSize: "10px"}}>
+                                      N/A
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 100%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 50%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 20%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 10%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 5%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 2%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 1%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 0.5%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 0.2%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 0.1%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    &gt; 0%
+                                </td>
+                                <td className={"small text-muted"} style={{fontSize: "10px"}}>
+                                    -
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align={"center"} colSpan={12} className={"small"}>
+                                    Containment Scores badges with growth rate thresholds
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
+                    <p>
+                        <h5>Charts</h5>
+                        <table cellPadding={3}>
+                            <tr>
+                                <td valign={"top"}>
+                                    For every location we generate a bar chart that shows the progress of COVID-19 cases over time.
+                                    The gray bar indicates the currently selected date of the replay mode (see above).
+                                </td>
+                                <td>
+                                    <img src={"chart.png"} width={"200px"}/>
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
+                    <p>If you experience any issues or have suggestions on how to improve this application <a target="_blank" href="https://github.com/daniel-karl/covid19-map/issues">please let us know</a>.</p>
                     Stay healthy,<br />
                     <a target="_blank" href="https://github.com/daniel-karl/covid19-map#contributors">The contributors</a>
                 </Modal.Body>
@@ -247,7 +394,7 @@ class MapChart extends Map {
               <div hidden={that.state.minimized_controls}>
                 <span className="small text-muted mr-2">Mode:</span>
                 <Tooltip
-                    title={<span><b>Cumulative mode:</b> Glyphs show cumulative confirmed, recovered and deceased numbers including live updates during the day.<br/><br/><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
+                    title={<span><b>Cumulative mode:</b> Glyphs show absolute numbers including live updates during the day.<br/><br/><b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).</span>}
                     small={"true"}
                     arrow
                     disableTouchListener={true}
