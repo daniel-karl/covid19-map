@@ -168,7 +168,7 @@ class MapChart extends Map {
                     <h3>Tutorial</h3>
                     <p>
                         <h5>Glyphs</h5>
-                        We map cases of COVID-19 to glyphs on the map:<br />
+                        We show cases of COVID-19 as glyphs on the map:<br />
                         <table cellPadding={3} className={"w-100"}>
                             <tr>
                                 <td align={"center"}><img src={"glyphs.png"} height={"50px"}/></td>
@@ -187,15 +187,39 @@ class MapChart extends Map {
                     </p>
                     <p>
                         <h5>Modes</h5>
-                        TBD
+                        <b>Cumulative mode:</b> Glyphs show cumulative confirmed, recovered and deceased numbers including live updates during the day.<br/>
+                        <br/>
+                        <b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).
                     </p>
                     <p>
                         <h5>Normalization</h5>
-                        TBD
+                        <b>Log:</b> Toggle between logarithmic and linear normalization of the data. Linear normalization preserves the absolute
+                        differences in the data, whereas logarithmic scaling allows for comparison on the order of magnitude, i.e. the <i>length</i> of values.<br />
+                        <br />
+                        <b>Population:</b> Toggle whether to scale the data according to the number of people in a location.<br />
+                        This also changes all numbers in the application to parts per million (<b>PPM</b>).
                     </p>
                     <p>
                         <h5>"What if?"-testing rates</h5>
-                        TBD
+                        Display how many confirmed cases there might be if the local testing rate in a location was coinciding with the global average.
+                        We represent this number of <i>projected</i> confirmed cases as blue halos behind the known confirmed number (red).
+                        <table cellPadding={3} className={"w-100"}>
+                            <tr>
+                                <td align={"center"}><img src={"glyphs5.png"} height={"50px"}/></td>
+                                <td align={"center"}><img src={"glyphs4.png"} height={"50px"}/></td>
+                                <td align={"center"}><img src={"glyphs6.png"} height={"50px"}/></td>
+                            </tr>
+                            <tr>
+                                <td align={"center"} className={"small text-secondary"}>Mountains</td>
+                                <td align={"center"} className={"small text-secondary"}>Bubbles</td>
+                                <td align={"center"} className={"small text-secondary"}>Candles</td>
+                            </tr>
+                            <tr>
+                                <td align={"center"} colSpan={3} className={"small"}>
+                                    Projected confirmed numbers shown as blue halos.
+                                </td>
+                            </tr>
+                        </table>
                     </p>
                     Stay healthy,<br />
                     <a target="_blank" href="https://github.com/daniel-karl/covid19-map#contributors">The contributors</a>
