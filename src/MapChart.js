@@ -186,7 +186,7 @@ class MapChart extends Map {
                     </p>
                     <p>
                         <h5>Modes</h5>
-                        <b>Cumulative mode:</b> Glyphs show cumulative confirmed, recovered and deceased numbers including live updates during the day.<br/>
+                        <b>Cumulative mode:</b> Glyphs show absolute numbers including live updates during the day.<br/>
                         <br/>
                         <b>Momentum mode:</b> Glyphs show growth (red) and shrinking (green) of active cases since last 1, 3 or 7 day(s).
                     </p>
