@@ -806,7 +806,7 @@ class MapChart extends Map {
                             this.setState({
                                 lng: this.state.datasource.locations[name][0],
                                 lat: this.state.datasource.locations[name][1],
-                                zoom: 5 + Math.random() / 10
+                                zoom: 6
                             })
                         }}
                     >
@@ -1030,27 +1030,87 @@ class MapChart extends Map {
   };
 
   marker = (index, coordinates, color, size, data, name, type, opacity, offset) => {
+    let zoom = 1;
+    switch(this.state.zoom) {
+        case 0:
+            zoom = 10;
+            break;
+        case 1:
+            zoom = 7.5;
+            break;
+        case 2:
+            zoom = 5;
+            break;
+        case 3:
+            zoom = 2;
+            break;
+        case 4:
+            zoom = 1.5;
+            break;
+        case 5:
+            zoom = 1;
+            break;
+        case 6:
+            zoom = 0.75;
+            break;
+        case 7:
+            zoom = 0.5;
+            break;
+        case 8:
+            zoom = 0.2;
+            break;
+        case 9:
+            zoom = 0.1;
+            break;
+        case 10:
+            zoom = 0.075;
+            break;
+        case 11:
+            zoom = 0.05;
+            break;
+        case 12:
+            zoom = 0.02;
+            break;
+        case 13:
+            zoom = 0.01;
+            break;
+        case 14:
+            zoom = 0.0075;
+            break;
+        case 15:
+            zoom = 0.005;
+            break;
+        case 16:
+            zoom = 0.002;
+            break;
+        case 17:
+            zoom = 0.001;
+            break;
+        case 18:
+            zoom = 0.00075;
+            break;
+    }
 
-    let diffX = 0.5 * Math.min(5 ** 2 / this.state.zoom ** 2, 1);
-    let diffY = isNaN(size) ? 0 : (size * this.state.factor < 0) ? 0 : size * this.state.factor;
+    let diffX = 0.5 * zoom * Math.sqrt(this.state.factor / 200);
+    let diffY = isNaN(size) ? 0 : (size * this.state.factor < 0) ? 0 : size * (this.state.factor / 2);
     let corner0 = [Number(coordinates[1]), Number(coordinates[0]) - diffX];
-    let corner1 = [Number(coordinates[1]) + diffY * Math.min(5 / this.state.zoom, 10), Number(coordinates[0]) + diffX];
+    let corner1 = [Number(coordinates[1]) + diffY * zoom, Number(coordinates[0]) + diffX];
 
     let latLngs = [
         [ Number(coordinates[1]), Number(coordinates[0]) - diffX ],
-        [ Number(coordinates[1]) + diffY * Math.min(5 / this.state.zoom, 10), Number(coordinates[0])],
+        [ Number(coordinates[1]) + diffY * zoom, Number(coordinates[0])],
         [ Number(coordinates[1]), Number(coordinates[0]) + diffX ]
     ];
 
     if (this.state.glyphs === "mountains") {
         if(offset < 0) {
-            latLngs[0][1] -= diffX * 2;
-            latLngs[1][1] -= diffX * 2;
-            latLngs[2][1] -= diffX * 2;
+            latLngs[0][1] -= diffX;
+            latLngs[1][1] -= diffX;
+            latLngs[2][1] -= diffX;
         } else if (offset > 0) {
-            latLngs[0][1] += diffX * 2;
-            latLngs[1][1] += diffX * 2;
-            latLngs[2][1] += diffX * 2;
+            latLngs[0][1] += diffX;
+            latLngs[1][1] += diffX;
+            latLngs[2][1] += diffX;
         }
     }
 
