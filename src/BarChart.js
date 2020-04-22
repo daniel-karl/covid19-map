@@ -32,7 +32,7 @@ export default class BarChart extends React.Component {
             let svgWidth = 272;
             let svgHeight = 145;
             let barWidth = svgWidth / (datasource.datasets.length);
-            let max = datasource.maxValue;
+            let max = datasource.absoluteMaxValue;
             // let confirmedProjectedBarHeight;
             let confirmedBarHeight;
             let recoveredBarHeight;

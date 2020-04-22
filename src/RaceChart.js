@@ -25,7 +25,7 @@ export default class RaceChart extends React.Component {
               }
               return 0;
             }).map((name, index) => {
-            let max = datasource.maxValue;
+            let max = datasource.absoluteMaxValue;
             let points = "";
             Object.values(datasource.datasets).map((dataset, dateIndex) => {
               let value = dataset.data[name].absolute.current.confirmed;

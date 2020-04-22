@@ -11,7 +11,8 @@ export class Datasource {
         this.locations = {};
 
         // maximum value (for normalization)
-        this.maxValue = 0;
+        this.absoluteMaxValue = 0;
+        this.ppmMaxValue = 0
     }
 
 }

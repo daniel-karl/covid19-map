@@ -295,8 +295,10 @@ export class JHDatasourceProvider extends DatasourceProvider {
                 }
 
                 // track max
-                ds.maxValue = Math.max(ds.maxValue, locationData.absolute.current.confirmed);
-                ds.maxValue = Math.max(ds.maxValue, locationData.absolute.current.confirmedProjected);
+                ds.absoluteMaxValue = Math.max(ds.absoluteMaxValue, locationData.absolute.current.confirmed);
+                ds.absoluteMaxValue = Math.max(ds.absoluteMaxValue, locationData.absolute.current.confirmedProjected);
+                ds.ppmMaxValue = Math.max(ds.ppmMaxValue, locationData.ppm.current.confirmed);
+                ds.ppmMaxValue = Math.max(ds.ppmMaxValue, locationData.ppm.current.confirmedProjected);
             });
         });
     };

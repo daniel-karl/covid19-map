@@ -884,20 +884,19 @@ class MapChart extends Map {
         let size;
         switch (this.state.momentum) {
           case "last1":
-            size = ds.data[name].absolute.growthLast1Day.active / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast1Day.active / this.state.datasource.absoluteMaxValue;
             break;
           case "last3":
-            size = ds.data[name].absolute.growthLast3Days.active / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast3Days.active / this.state.datasource.absoluteMaxValue;
             break;
           case "last7":
-            size = ds.data[name].absolute.growthLast7Days.active / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast7Days.active / this.state.datasource.absoluteMaxValue;
             break;
         }
         if(size !== 0) {
             let pos = size >= 0;
             size = Math.abs(size);
             size = this.scaleLog(size);
-            size = this.scalePpm(size, pop);
             size = this.scaleLogAndPpm(size);
             markers.push(
                 <CircleMarker
@@ -923,19 +922,18 @@ class MapChart extends Map {
         // deceased cases
         switch (this.state.momentum) {
           case "last1":
-            size = ds.data[name].absolute.growthLast1Day.deceased / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast1Day.deceased / this.state.datasource.absoluteMaxValue;
             break;
           case "last3":
-            size = ds.data[name].absolute.growthLast3Days.deceased / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast3Days.deceased / this.state.datasource.absoluteMaxValue;
             break;
           case "last7":
-            size = ds.data[name].absolute.growthLast7Days.deceased / this.state.datasource.maxValue;
+            size = ds.data[name].absolute.growthLast7Days.deceased / this.state.datasource.absoluteMaxValue;
             break;
         }
         size = Math.abs(size);
         if(size !== 0) {
             size = this.scaleLog(size);
-            size = this.scalePpm(size, pop);
             size = this.scaleLogAndPpm(size);
             markers.push(
                 <CircleMarker
@@ -981,10 +979,12 @@ class MapChart extends Map {
     return (
       this.state.momentum==="none" &&
         Object.keys(ds.data).map((name, locationIndex) => {
-          let value = ds.data[name].absolute.current.confirmedProjected / that.state.datasource.maxValue * that.state.testscale;
-          // let value = ds.data[name].ppm.current.confirmedProjected;
+          let value = ds.data[name].absolute.current.confirmedProjected / that.state.datasource.absoluteMaxValue * that.state.testscale;
+          if(this.state.ppmmode) {
+              value = ds.data[name].ppm.current.confirmedProjected / that.state.datasource.ppmMaxValue * that.state.testscale;
+          }
           let size = this.scale(value, Population.ABSOLUTE[name]);
-          return this.marker(locationIndex, that.state.datasource.locations[name], "#007bff", size, ds.data[name], name, "projected", 0.5, -1);
+          return this.marker(locationIndex, that.state.datasource.locations[name], "#007bff", size, ds.data[name], name, "projected", 0.8, -1);
         })
     )
   };
@@ -994,8 +994,10 @@ class MapChart extends Map {
     return (
       this.state.momentum==="none" &&
         Object.keys(ds.data).map((name, locationIndex) => {
-          let value = ds.data[name].absolute.current.confirmed / that.state.datasource.maxValue;
-          // let value = ds.data[name].ppm.current.confirmed;
+          let value = ds.data[name].absolute.current.confirmed / that.state.datasource.absoluteMaxValue;
+          if(this.state.ppmmode) {
+              value = ds.data[name].ppm.current.confirmed / that.state.datasource.ppmMaxValue;
+          }
           let size = this.scale(value, Population.ABSOLUTE[name]);
           return this.marker(locationIndex, that.state.datasource.locations[name], "#dc3545", size, ds.data[name], name, "confirmed", 0.8, -1);
         })
@@ -1007,9 +1009,16 @@ class MapChart extends Map {
     return (
       this.state.momentum==="none" &&
         Object.keys(ds.data).map((name, locationIndex) => {
-          let value = ds.data[name].absolute.current.recovered / that.state.datasource.maxValue;
-          value += ds.data[name].absolute.current.deceased / that.state.datasource.maxValue;
-          // let value = ds.data[name].ppm.current.recovered;
+          let value = ds.data[name].absolute.current.recovered / that.state.datasource.absoluteMaxValue;
+          if(this.state.ppmmode) {
+              value = ds.data[name].ppm.current.recovered / that.state.datasource.ppmMaxValue;
+          }
+          if(this.state.glyph !== "mountains") {
+              value += ds.data[name].absolute.current.deceased / that.state.datasource.absoluteMaxValue;
+              if(this.state.ppmmode) {
+                  value += ds.data[name].ppm.current.deceased / that.state.datasource.ppmMaxValue;
+              }
+          }
           let size = this.scale(value, Population.ABSOLUTE[name]);
           return this.marker(locationIndex, that.state.datasource.locations[name], "#28a745", size, ds.data[name], name, "recovered", 0.8, 0);
         })
@@ -1021,8 +1030,10 @@ class MapChart extends Map {
     return (
       this.state.momentum==="none" &&
         Object.keys(ds.data).map((name, locationIndex) => {
-          let value = ds.data[name].absolute.current.deceased / that.state.datasource.maxValue;
-          // let value = ds.data[name].ppm.current.deceased;
+          let value = ds.data[name].absolute.current.deceased / that.state.datasource.absoluteMaxValue;
+          if(this.state.ppmmode) {
+              value = ds.data[name].ppm.current.deceased / that.state.datasource.ppmMaxValue;
+          }
           let size = this.scale(value, Population.ABSOLUTE[name]);
           return this.marker(locationIndex, that.state.datasource.locations[name], "#212529", size, ds.data[name], name, "deceased", 0.9, +1);
         })
@@ -1031,7 +1042,7 @@ class MapChart extends Map {
 
   marker = (index, coordinates, color, size, data, name, type, opacity, offset) => {
     let zoom = 1;
-    switch(this.state.zoom) {
+    switch (this.state.zoom) {
         case 0:
             zoom = 10;
             break;
@@ -1513,9 +1524,10 @@ class MapChart extends Map {
 
   scale = (value, population) => {
     value = this.scaleIfPillOrBar(value);
+    if(!this.state.logmode && this.state.ppmmode) {
+        value /= 5;
+    }
     value = this.scaleLog(value);
-    value = this.scalePpm(value, population);
-    value = this.scaleLogAndPpm(value);
     return value;
   };
 
@@ -1531,20 +1543,12 @@ class MapChart extends Map {
       return value;
     }
     if(value > 0) {
-        value = Math.log(value * this.state.datasource.maxValue) / Math.log(this.state.datasource.maxValue) / 20;
+        if(!this.state.ppmmode) {
+            value = Math.log(value * this.state.datasource.absoluteMaxValue) / Math.log(this.state.datasource.absoluteMaxValue) / 20;
+        } else {
+            value = Math.log(value * this.state.datasource.ppmMaxValue) / Math.log(this.state.datasource.ppmMaxValue) / 20;
+        }
         return value;
-    }
-    return 0;
-  };
-
-  scalePpm = (value, population) => {
-    if(!this.state.ppmmode) {
-      return value;
-    }
-    if(population) {
-      if((value > 0) && ( population > 1000000)) {
-        return 1000000 * value / population * 20;
-      }
     }
     return 0;
   };
