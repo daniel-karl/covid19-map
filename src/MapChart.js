@@ -164,6 +164,39 @@ class MapChart extends Map {
                     <p><i>covid19map.io</i> is a free <a target="_blank" href="https://github.com/daniel-karl/covid19-map/#open-covid19-map-%EF%B8%8F">open source</a> project.</p>
                     <p>We provide a more detailed view on <a target="_blank" href="https://github.com/CSSEGISandData/COVID-19">Johns Hopkins University CSSE COVID-19 data repository</a>.</p>
                     <p>If you experience any issues or have suggestions on how to improve this application <a target="_blank" href="https://github.com/daniel-karl/covid19-map/issues">please let us know</a>.</p>
+
+                    <h3>Tutorial</h3>
+                    <p>
+                        <h5>Glyphs</h5>
+                        We map cases of COVID-19 to glyphs on the map:<br />
+                        <table cellPadding={3} className={"w-100"}>
+                            <tr>
+                                <td align={"center"}><img src={"glyphs.png"} height={"50px"}/></td>
+                                <td align={"center"}><img src={"glyphs2.png"} height={"50px"}/></td>
+                                <td align={"center"}><img src={"glyphs3.png"} height={"50px"}/></td>
+                            </tr>
+                            <tr>
+                                <td align={"center"} className={"small text-secondary"}>Mountains</td>
+                                <td align={"center"} className={"small text-secondary"}>Bubbles</td>
+                                <td align={"center"} className={"small text-secondary"}>Candles</td>
+                            </tr>
+                        </table>
+                        <span className="small text-danger">Red: Confirmed cases</span><br />
+                        <span className="small text-success">Green: Recovered cases</span><br/>
+                        <span className="small text-dark">Black: Deceased cases</span><br/>
+                    </p>
+                    <p>
+                        <h5>Modes</h5>
+                        TBD
+                    </p>
+                    <p>
+                        <h5>Normalization</h5>
+                        TBD
+                    </p>
+                    <p>
+                        <h5>"What if?"-testing rates</h5>
+                        TBD
+                    </p>
                     Stay healthy,<br />
                     <a target="_blank" href="https://github.com/daniel-karl/covid19-map#contributors">The contributors</a>
                 </Modal.Body>
