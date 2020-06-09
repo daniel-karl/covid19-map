@@ -58,13 +58,13 @@ export class JHDatasourceProvider extends DatasourceProvider {
                                         this.computeContainmentScore(ds);
                                         this.computeTotals(ds);
 
-                                        let missing = [];
+                                        /*let missing = [];
                                         Object.keys(ds.locations).map((location) => {
                                            if(!Object.keys(Population.ABSOLUTE).includes(location)) {
                                                missing.push(location);
                                            }
                                         });
-                                        console.log(JSON.stringify(missing));
+                                        console.log(JSON.stringify(missing));*/
 
                                         callback(ds);
                                     });
