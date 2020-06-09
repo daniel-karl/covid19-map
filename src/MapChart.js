@@ -401,7 +401,7 @@ class MapChart extends Map {
                 >
                   <span className="test"><FontAwesomeIcon icon={faQuestion} size={"xs"}/></span>
                 </Tooltip><br />
-                <FormControl>
+                <FormControl className={"mb-2"}>
                   <Select
                     labelId="demo-simple-select-outlined-label"
                     id="demo-simple-select-outlined"
@@ -416,7 +416,7 @@ class MapChart extends Map {
                     <MenuItem value={"last7"}>Momentum (last 7 days)</MenuItem>
                   </Select>
                 </FormControl>
-                <FormControlLabel
+                {/*<FormControlLabel
                   control={
                       <Checkbox
                           color="primary"
@@ -441,7 +441,8 @@ class MapChart extends Map {
                       <span>Include US counties<br />(reduces speed)</span>
                     </Tooltip>
                   }
-                />
+                />*/}
+                <br />
                 <span className="small text-muted mr-2">Normalization:</span>
                 <Tooltip
                     title="Scale the size of the glyphs on the map according to different criteria."
