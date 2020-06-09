@@ -58,6 +58,14 @@ export class JHDatasourceProvider extends DatasourceProvider {
                                         this.computeContainmentScore(ds);
                                         this.computeTotals(ds);
 
+                                        let missing = [];
+                                        Object.keys(ds.locations).map((location) => {
+                                           if(!Object.keys(Population.ABSOLUTE).includes(location)) {
+                                               missing.push(location);
+                                           }
+                                        });
+                                        console.log(JSON.stringify(missing));
+
                                         callback(ds);
                                     });
                                 });
@@ -508,7 +516,8 @@ export class JHDatasourceProvider extends DatasourceProvider {
 
     ppm = (name, value) => {
         if(!Population.ABSOLUTE[name]) {
-            // console.log("No population data for: " + name);
+            console.log("No population data for: " + name);
+            return 0;
         }
         return 1000000 * value / Population.ABSOLUTE[name];
     };
